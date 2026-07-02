@@ -1,0 +1,389 @@
+{
+  "profile": {
+    "name": "Imran Khan",
+    "title": "Software Engineer",
+    "summary": "Building scalable software products with engineering precision, AI intelligence, and problem-solving excellence.",
+    "about": "A carefully selected technology stack built through real-world projects, competitive programming, and continuous learning—covering modern web development, backend engineering, databases, artificial intelligence, and software engineering fundamentals.",
+    "location": "Greater Noida, India",
+    "cgpa": "",
+    "status": "Available for opportunities",
+    "openToWork": true
+  },
+  "contact": {
+    "email": "ik3370349@gmail.com",
+    "phone": "+91 8700520631",
+    "location": "Greater Noida, India",
+    "linkedin": "https://linkedin.com/in/imran-khan-sam8700",
+    "github": "https://github.com/yourusername",
+    "twitter": "https://twitter.com/yourusername",
+    "whatsapp": "https://wa.me/1234567890",
+    "customLinks": []
+  },
+  "resume": "",
+  "education": {
+    "cgpa": "8.37",
+    "resume": "/resume/imran-khan-resume-3-1782990190991.pdf"
+  },
+  "platforms": [
+    {
+      "id": "leetcode",
+      "name": "LeetCode",
+      "username": "Imran_Khan_87"
+    },
+    {
+      "id": "codeforces",
+      "name": "Codeforces",
+      "username": "Imrankhan87"
+    },
+    {
+      "id": "codechef",
+      "name": "CodeChef",
+      "username": "imran_khan_87"
+    },
+    {
+      "id": "hackerrank",
+      "name": "HackerRank",
+      "username": "Imran_khan_87"
+    },
+    {
+      "id": "gfg",
+      "name": "GeeksforGeeks",
+      "username": "ik337vgef"
+    },
+    {
+      "id": "atcoder",
+      "name": "AtCoder",
+      "username": "Imran_khan_87"
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "username": "Imrankhancoder917"
+    }
+  ],
+  "skills": [
+    {
+      "title": "Programming Languages",
+      "description": "Core languages used across application, backend, and automation work.",
+      "skills": [
+        {
+          "name": "Java",
+          "level": "advanced",
+          "category": "Programming Languages"
+        },
+        {
+          "name": "Python",
+          "level": "advanced",
+          "category": "Programming Languages"
+        }
+      ]
+    },
+    {
+      "title": "Front End",
+      "description": "Core web interface technologies for building responsive and user-friendly client experiences.",
+      "skills": [
+        {
+          "name": "HTML",
+          "level": "advanced",
+          "category": "Front End"
+        },
+        {
+          "name": "CSS",
+          "level": "advanced",
+          "category": "Front End"
+        },
+        {
+          "name": "JavaScript",
+          "level": "advanced",
+          "category": "Front End"
+        },
+        {
+          "name": "Bootstrap",
+          "level": "advanced",
+          "category": "Front End"
+        }
+      ]
+    },
+    {
+      "title": "Backend Development",
+      "description": "Server-side systems, APIs, and application architecture for production workflows.",
+      "skills": [
+        {
+          "name": "REST APIs",
+          "level": "advanced",
+          "category": "Backend Development"
+        },
+        {
+          "name": "Spring Boot",
+          "level": "advanced",
+          "category": "Backend Development"
+        },
+        {
+          "name": "Flask",
+          "level": "advanced",
+          "category": "Backend Development"
+        },
+        {
+          "name": "Backend Architecture",
+          "level": "intermediate",
+          "category": "Backend Development"
+        },
+        {
+          "name": "Mesh Networking",
+          "level": "intermediate",
+          "category": "Backend Development"
+        },
+        {
+          "name": "JavaFX",
+          "level": "intermediate",
+          "category": "Backend Development"
+        }
+      ]
+    },
+    {
+      "title": "Database",
+      "description": "Relational and document data modeling for durable application storage.",
+      "skills": [
+        {
+          "name": "MySQL",
+          "level": "advanced",
+          "category": "Database"
+        },
+        {
+          "name": "Database Design",
+          "level": "advanced",
+          "category": "Database"
+        },
+        {
+          "name": "SQLite",
+          "level": "intermediate",
+          "category": "Database"
+        }
+      ]
+    },
+    {
+      "title": "AI & Machine Learning",
+      "description": "Intelligent product features, prompt workflows, and data-driven experimentation.",
+      "skills": [
+        {
+          "name": "Artificial Intelligence",
+          "level": "advanced",
+          "category": "AI & Machine Learning"
+        },
+        {
+          "name": "Machine Learning",
+          "level": "intermediate",
+          "category": "AI & Machine Learning"
+        },
+        {
+          "name": "Prompt Engineering",
+          "level": "intermediate",
+          "category": "AI & Machine Learning"
+        },
+        {
+          "name": "AI Integration",
+          "level": "advanced",
+          "category": "AI & Machine Learning"
+        },
+        {
+          "name": "Data Analysis",
+          "level": "intermediate",
+          "category": "AI & Machine Learning"
+        }
+      ]
+    },
+    {
+      "title": "Tools & Platforms",
+      "description": "Development tooling and environments used for shipping and debugging software.",
+      "skills": [
+        {
+          "name": "Git",
+          "level": "advanced",
+          "category": "Tools & Platforms"
+        },
+        {
+          "name": "GitHub",
+          "level": "advanced",
+          "category": "Tools & Platforms"
+        },
+        {
+          "name": "VS Code",
+          "level": "expert",
+          "category": "Tools & Platforms"
+        },
+        {
+          "name": "Linux",
+          "level": "intermediate",
+          "category": "Tools & Platforms"
+        },
+        {
+          "name": "Tkinter",
+          "level": "intermediate",
+          "category": "Tools & Platforms"
+        }
+      ]
+    },
+    {
+      "title": "Computer Science Fundamentals",
+      "description": "Foundational CS skills that support engineering quality and system understanding.",
+      "skills": [
+        {
+          "name": "Data Structures & Algorithms",
+          "level": "advanced",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Object-Oriented Programming",
+          "level": "advanced",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "DBMS",
+          "level": "advanced",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Operating Systems",
+          "level": "intermediate",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Computer Networks",
+          "level": "intermediate",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Software Engineering",
+          "level": "advanced",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Networking",
+          "level": "intermediate",
+          "category": "Computer Science Fundamentals"
+        },
+        {
+          "name": "Packet Analysis",
+          "level": "intermediate",
+          "category": "Computer Science Fundamentals"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "ai-mock-interview-platform",
+      "title": "AI Mock Interview Platform",
+      "description": "An AI-powered interview preparation platform featuring real-time mock interviews, intelligent feedback, performance analytics, and personalized improvement recommendations.",
+      "overview": "A polished interview practice experience that blends AI feedback, analytics, and structured simulations to help candidates improve faster.",
+      "category": "AI",
+      "techStack": [
+        "Flask",
+        "AI",
+        "Tailwind CSS"
+      ],
+      "image": "https://aiinterviewhub.com/static/media/dashboard-group.ffcae4978897e8eb0347.png",
+      "images": [
+        "https://aiinterviewhub.com/static/media/dashboard-group.ffcae4978897e8eb0347.png"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#ai-mock-interview-platform",
+      "featured": true
+    },
+    {
+      "id": "offline-payment-system",
+      "title": "Offline Payment System Using Java & Mesh Technology",
+      "description": "A secure offline payment solution using mesh networking technology that enables transactions even without internet connectivity.",
+      "overview": "An edge-first transaction system designed for resilience, local-first workflows, and secure payment exchange across mesh-connected devices.",
+      "category": "Backend",
+      "techStack": [
+        "Java",
+        "Mesh Networking"
+      ],
+      "image": "https://mir-s3-cdn-cf.behance.net/project_modules/1400/9eacff100357725.5f0719696399d.jpg",
+      "images": [
+        "https://mir-s3-cdn-cf.behance.net/project_modules/1400/9eacff100357725.5f0719696399d.jpg"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#offline-payment-system",
+      "featured": true
+    },
+    {
+      "id": "e-commerce-website",
+      "title": "E-Commerce Website",
+      "description": "A polished shopping experience with product browsing, cart management, and structured checkout flows.",
+      "overview": "A full-stack commerce interface focused on premium presentation, category exploration, and a smooth purchase path.",
+      "category": "Full Stack",
+      "techStack": [
+        "Java",
+        "HTML",
+        "CSS",
+        "MySQL"
+      ],
+      "image": "https://mir-s3-cdn-cf.behance.net/project_modules/1400/8890f9175758177.64b8ff51e4fc2.png",
+      "images": [
+        "https://mir-s3-cdn-cf.behance.net/project_modules/1400/8890f9175758177.64b8ff51e4fc2.png"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#e-commerce-website",
+      "featured": false
+    },
+    {
+      "id": "temperature-converter",
+      "title": "Temperature Converter",
+      "description": "A clean desktop utility for fast and reliable temperature conversions with a modern calculator-style interface.",
+      "overview": "A simple but polished Tkinter application that prioritizes clarity, speed, and a refined utility-app layout.",
+      "category": "Full Stack",
+      "techStack": [
+        "Python",
+        "Tkinter"
+      ],
+      "image": "https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_498,h_290/https://www.programminginpython.com/wp-content/uploads/2023/03/tempature_converter_python1.png",
+      "images": [
+        "https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_498,h_290/https://www.programminginpython.com/wp-content/uploads/2023/03/tempature_converter_python1.png"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#temperature-converter",
+      "featured": false
+    },
+    {
+      "id": "carbon-footprint-monitor",
+      "title": "Carbon Footprint Monitor",
+      "description": "A sustainability dashboard for tracking environmental impact, carbon usage, and actionable analytics.",
+      "overview": "A metrics-driven sustainability product that turns environmental data into clear decisions and visual progress.",
+      "category": "Machine Learning",
+      "techStack": [
+        "Java",
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
+      "image": "https://www.board.com/wp-content/uploads/2025/02/picture1_11.png",
+      "images": [
+        "https://www.board.com/wp-content/uploads/2025/02/picture1_11.png"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#carbon-footprint-monitor",
+      "featured": false
+    },
+    {
+      "id": "deep-packet-inspection",
+      "title": "Deep Packet Inspection",
+      "description": "A cybersecurity and network monitoring project for packet analysis, traffic inspection, and visibility.",
+      "overview": "A technically focused networking tool that highlights packet-level analysis, inspection workflows, and security observability.",
+      "category": "Backend",
+      "techStack": [
+        "Java",
+        "Networking",
+        "Packet Analysis"
+      ],
+      "image": "https://cdn.comparitech.com/wp-content/uploads/2018/04/6-captured-packets-screenshot-.jpg",
+      "images": [
+        "https://cdn.comparitech.com/wp-content/uploads/2018/04/6-captured-packets-screenshot-.jpg"
+      ],
+      "github": "https://github.com/yourusername",
+      "demo": "/projects#deep-packet-inspection",
+      "featured": false
+    }
+  ]
+}
