@@ -16,8 +16,20 @@ const LEVEL_META = {
   expert: { label: "Expert", width: 94, gradient: "from-cyan-400 via-sky-500 to-blue-600" },
 } as const;
 
+const TITLE_COLORS = [
+  "text-sky-600 group-hover:text-sky-500",
+  "text-emerald-600 group-hover:text-emerald-500",
+  "text-violet-600 group-hover:text-violet-500",
+  "text-orange-600 group-hover:text-orange-500",
+  "text-pink-600 group-hover:text-pink-500",
+  "text-indigo-600 group-hover:text-indigo-500",
+  "text-teal-600 group-hover:text-teal-500",
+  "text-rose-600 group-hover:text-rose-500",
+];
+
 export default function SkillCard({ skill, index = 0 }: SkillCardProps) {
   const meta = LEVEL_META[skill.level];
+  const titleColor = TITLE_COLORS[index % TITLE_COLORS.length];
 
   return (
     <motion.div
@@ -37,7 +49,7 @@ export default function SkillCard({ skill, index = 0 }: SkillCardProps) {
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">
               {skill.category}
             </p>
-            <h3 className="mt-2 text-[1.05rem] font-semibold tracking-[-0.02em] text-slate-900 transition-colors duration-300 group-hover:text-sky-700">
+            <h3 className={`mt-2 text-[1.05rem] font-semibold tracking-[-0.02em] transition-colors duration-300 ${titleColor}`}>
               {skill.name}
             </h3>
           </div>

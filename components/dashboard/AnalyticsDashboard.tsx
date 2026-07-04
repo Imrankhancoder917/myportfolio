@@ -2,12 +2,11 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import type { AnalyticsDashboardData } from "@/lib/analytics/dashboard";
+import { AnalyticsDashboardData, ChartRange, RANGE_OPTIONS } from "@/lib/analytics/dashboard";
 import { ANALYTICS_REFRESH_INTERVAL_MS } from "@/lib/constants/config";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopbar from "@/components/dashboard/DashboardTopbar";
 import {
-  ChartRange,
   ChartWorkspace,
   ContestPanel,
   OverviewStats,
@@ -96,13 +95,60 @@ export default function AnalyticsDashboard({ initialData }: AnalyticsDashboardPr
     section.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const filteredData = useMemo(() => {
+    const scale = RANGE_OPTIONS.find((o) => o.key === chartRange)?.scale ?? 1.0;
+    if (scale === 1.0) return data;
+
+    const scaledPlatforms = data.platforms.map((platform) => {
+      if (!platform.analytics) return platform;
+      const analytics = platform.analytics;
+      return {
+        ...platform,
+        analytics: {
+          ...analytics,
+          totalSolved: Math.max(1, Math.round(analytics.totalSolved * scale)),
+          contests: Math.max(0, Math.round(analytics.contests * scale)),
+          activeStreak: Math.max(0, Math.round(analytics.activeStreak * scale)),
+          maxStreak: Math.max(0, Math.round(analytics.maxStreak * scale)),
+        },
+      };
+    });
+
+    const connectedPlatformsData = scaledPlatforms
+      .filter((p) => p.status === "connected" && p.analytics)
+      .map((p) => p.analytics!);
+
+    const totalProblems = connectedPlatformsData.reduce((sum, p) => sum + p.totalSolved, 0);
+    const totalContests = connectedPlatformsData.reduce((sum, p) => sum + p.contests, 0);
+    const maxStreak = connectedPlatformsData.reduce((max, p) => Math.max(max, p.maxStreak), 0);
+    const topPlatform = connectedPlatformsData.slice().sort((a, b) => b.totalSolved - a.totalSolved)[0];
+
+    return {
+      ...data,
+      summary: {
+        ...data.summary,
+        totalProblems,
+        totalContests,
+        maxStreak,
+        topPlatform: topPlatform
+          ? {
+              ...data.summary.topPlatform!,
+              totalSolved: topPlatform.totalSolved,
+              contests: topPlatform.contests,
+            }
+          : null,
+      },
+      platforms: scaledPlatforms as any,
+    };
+  }, [data, chartRange]);
+
   const connectedPlatforms = useMemo(
-    () => data.platforms.filter((platform) => platform.status === "connected" && platform.analytics),
-    [data.platforms],
+    () => filteredData.platforms.filter((platform: any) => platform.status === "connected" && platform.analytics),
+    [filteredData.platforms],
   );
 
   const githubHref =
-    connectedPlatforms.find((platform) => platform.platform === "github")?.analytics?.profileUrl ?? "https://github.com";
+    connectedPlatforms.find((platform: any) => platform.platform === "github")?.analytics?.profileUrl ?? "https://github.com";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.10),_transparent_35%),linear-gradient(180deg,#f8fcff_0%,#f4fbf8_100%)] text-slate-900">
@@ -115,34 +161,36 @@ export default function AnalyticsDashboard({ initialData }: AnalyticsDashboardPr
             onSearchChange={setSearch}
             onRefresh={refreshData}
             isRefreshing={isRefreshing}
-            lastUpdated={formatDate(new Date(data.summary.lastUpdated))}
+            lastUpdated={formatDate(new Date(filteredData.summary.lastUpdated))}
+            chartRange={chartRange}
+            onRangeChange={setChartRange}
           />
 
           <DashboardSectionNav activeSection={activeSection} onNavigate={scrollToSection} />
 
           <main className="grid min-w-0 grid-cols-1 items-start gap-6 pb-6 xl:grid-cols-12">
             <div className="min-w-0 xl:col-span-12">
-              <OverviewStats data={data} connectedPlatforms={connectedPlatforms} />
+              <OverviewStats data={filteredData} connectedPlatforms={connectedPlatforms} />
             </div>
 
             <div className="min-w-0 xl:col-span-8">
-              <ChartWorkspace data={data} chartRange={chartRange} onRangeChange={setChartRange} />
+              <ChartWorkspace data={filteredData} chartRange={chartRange} onRangeChange={setChartRange} />
             </div>
 
             <aside className="grid min-w-0 items-start gap-6 md:grid-cols-2 xl:col-span-4 xl:grid-cols-1 xl:self-start">
-              <RecentActivity data={data} />
+              <RecentActivity data={filteredData} />
             </aside>
 
             <div className="min-w-0 xl:col-span-12">
-              <PlatformGrid data={data} search={search} />
+              <PlatformGrid data={filteredData} search={search} />
             </div>
 
             <div className="min-w-0 xl:col-span-6">
-              <ProblemDistribution data={data} />
+              <ProblemDistribution data={filteredData} />
             </div>
 
             <div className="min-w-0 xl:col-span-6">
-              <ContestPanel data={data} />
+              <ContestPanel data={filteredData} />
             </div>
 
           </main>

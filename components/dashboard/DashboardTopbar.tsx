@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Bell, RefreshCw, Search, SlidersHorizontal } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Bell, RefreshCw, Search, SlidersHorizontal, ChevronDown, CalendarDays } from "lucide-react";
+import { ChartRange, RANGE_OPTIONS } from "@/lib/analytics/dashboard";
 
 interface DashboardTopbarProps {
   search: string;
@@ -10,6 +11,8 @@ interface DashboardTopbarProps {
   onRefresh: () => void;
   isRefreshing: boolean;
   lastUpdated: string;
+  chartRange: ChartRange;
+  onRangeChange: (range: ChartRange) => void;
 }
 
 export default function DashboardTopbar({
@@ -18,7 +21,22 @@ export default function DashboardTopbar({
   onRefresh,
   isRefreshing,
   lastUpdated,
+  chartRange,
+  onRangeChange,
 }: DashboardTopbarProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -12 }}
@@ -49,6 +67,7 @@ export default function DashboardTopbar({
             <button className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50 hover:text-slate-950">
               <Bell className="h-4 w-4" />
             </button>
+            
             <button
               onClick={onRefresh}
               className="inline-flex h-11 items-center gap-2 rounded-full border border-sky-100 bg-white px-4 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-slate-950"
@@ -56,9 +75,48 @@ export default function DashboardTopbar({
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
               Refresh
             </button>
-            <button className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-gradient-to-br from-slate-900 to-slate-700 text-sm font-semibold text-white shadow-lg shadow-slate-200/70">
-              IK
-            </button>
+
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 shadow-[0_8px_20px_rgba(15,23,42,0.04)]"
+              >
+                <CalendarDays className="h-4 w-4 text-slate-500" />
+                <span className="hidden sm:inline-block">
+                  {RANGE_OPTIONS.find(o => o.key === chartRange)?.label ?? "All Time"}
+                </span>
+                <ChevronDown className="h-4 w-4 text-slate-400" />
+              </button>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute right-0 top-full mt-2 w-48 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_60px_-10px_rgba(15,23,42,0.15)] z-50 origin-top-right"
+                  >
+                    {RANGE_OPTIONS.map((option) => (
+                      <button
+                        key={option.key}
+                        onClick={() => {
+                          onRangeChange(option.key);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                          chartRange === option.key
+                            ? "bg-sky-50 text-sky-700"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>

@@ -1,149 +1,375 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import SectionContainer from "@/components/layout/SectionContainer";
-import { TIMELINE } from "@/lib/constants/skills";
-import { Download, Briefcase, BookOpen } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import {
+  Link2,
+  Mail,
+  Code2,
+  Terminal,
+  Trophy,
+  Coffee,
+  FileCode2,
+  FileJson,
+  Globe2,
+  Palette,
+  Atom,
+  Triangle,
+  Wind,
+  FlaskConical,
+  Network,
+  Database,
+  GitBranch,
+  BrainCircuit,
+  Cpu,
+  ArrowUpRight,
+  Download,
+  MessageSquare
+} from "lucide-react";
+import portfolioData from "@/data/portfolio.json";
+import type { AnalyticsDashboardData } from "@/lib/analytics/dashboard";
+
+const FEATURED_PROJECTS = portfolioData.projects.filter(p => p.featured).slice(0, 2);
+const SKILLS = portfolioData.skills.flatMap((section: any) => section.skills);
+
+const ROLES = [
+  "Software Engineer",
+  "Backend Developer",
+  "Full Stack Developer",
+  "AI Enthusiast",
+  "Competitive Programmer",
+  "Problem Solver",
+];
+
+
+
+function AnimatedCounter({ value, isStatic }: { value: number | null | string, isStatic?: boolean }) {
+  const [count, setCount] = useState<number | string>(isStatic && value !== null ? value : 0);
+
+  useEffect(() => {
+    if (isStatic) return;
+    if (value === null || typeof value === 'string') return;
+    
+    let startTime: number | null = null;
+    const duration = 1500;
+    
+    const animate = (time: number) => {
+      if (!startTime) startTime = time;
+      const progress = time - startTime;
+      const current = Math.min(Math.floor((progress / duration) * (value as number)), value as number);
+      setCount(current);
+      if (progress < duration) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(value);
+      }
+    };
+    
+    const rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
+  }, [value, isStatic]);
+
+  if (value === null) return <span>—</span>;
+  return <span>{count}</span>;
+}
 
 export default function AboutPage() {
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [analytics, setAnalytics] = useState<AnalyticsDashboardData | null>(null);
+  const [githubStats, setGithubStats] = useState<{ repos: number | null, contributions: number | null }>({ repos: null, contributions: null });
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRoleIndex((current) => (current + 1) % ROLES.length);
+    }, 2500);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/analytics")
+      .then((res) => res.json())
+      .then((data: AnalyticsDashboardData) => {
+        setAnalytics(data);
+        const githubData = data.platforms.find(p => p.platform === "github")?.analytics;
+        if (githubData) {
+          setGithubStats({
+            repos: githubData.totalSolved ?? null,
+            contributions: githubData.contributions ?? null
+          });
+        }
+      })
+      .catch((err) => console.error("Failed to fetch analytics", err));
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+  };
+
   return (
-    <main>
-      <SectionContainer className="pt-32">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-16"
-        >
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            About Me
-          </h1>
-          <p className="text-xl text-slate-300 max-w-3xl leading-relaxed">
-            I&apos;m a passionate software engineer and AI developer with a deep interest in building
-            scalable systems, crafting elegant solutions, and pushing the boundaries of what&apos;s
-            possible with modern technology. With a strong foundation in computer science and
-            hands-on experience across the full stack, I thrive in solving complex problems and
-            creating impactful digital experiences.
-          </p>
-        </motion.div>
+    <div className="relative mx-auto max-w-5xl px-6 py-8 md:py-12 lg:px-8">
+      
+      {/* SECTION 1: HERO */}
+      <motion.section 
+        variants={containerVariants} 
+        initial="hidden" 
+        animate="show"
+        className="grid items-center gap-12 md:grid-cols-2 lg:gap-20"
+      >
+        <div className="flex flex-col items-start">
+          <motion.div variants={itemVariants} className="mb-6 rounded-full border border-slate-200 bg-white px-4 py-1.5 shadow-sm">
+            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+              About Me
+            </span>
+          </motion.div>
+          
+          <motion.h1 variants={itemVariants} className="font-serif text-5xl font-semibold tracking-tight text-slate-900 md:text-6xl">
+            Hi, I&apos;m {portfolioData.profile.name}
+          </motion.h1>
+          
+          <motion.div variants={itemVariants} className="mt-4 h-8 text-lg font-medium text-slate-500 md:text-xl">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={roleIndex}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.4 }}
+                className="inline-block"
+              >
+                {ROLES[roleIndex]}
+              </motion.span>
+            </AnimatePresence>
+          </motion.div>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="mb-20"
-        >
-          <motion.a
-            href="/resume.pdf"
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all"
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.p variants={itemVariants} className="mt-6 text-base leading-relaxed text-slate-600">
+            {portfolioData.profile.about}
+          </motion.p>
+
+          <motion.div variants={itemVariants} className="mt-8 flex gap-4">
+            <Link href={portfolioData.contact.github} target="_blank" className="rounded-xl border border-slate-200 bg-white p-2.5 text-[#24292E] shadow-sm transition-all hover:scale-105 hover:border-slate-300">
+              <Code2 size={20} />
+            </Link>
+            <Link href={portfolioData.contact.linkedin} target="_blank" className="rounded-xl border border-slate-200 bg-white p-2.5 text-[#0A66C2] shadow-sm transition-all hover:scale-105 hover:border-slate-300">
+              <Link2 size={20} />
+            </Link>
+            <Link href={`mailto:${portfolioData.contact.email}`} className="rounded-xl border border-slate-200 bg-white p-2.5 text-rose-500 shadow-sm transition-all hover:scale-105 hover:border-slate-300">
+              <Mail size={20} />
+            </Link>
+          </motion.div>
+        </div>
+
+        <motion.div variants={itemVariants} className="flex flex-col items-center gap-6">
+          <motion.div 
+            animate={{ y: [0, -8, 0] }} 
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative h-72 w-72 overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-2 shadow-xl md:h-96 md:w-96"
           >
-            <Download className="w-5 h-5" />
-            Download Resume
-          </motion.a>
-        </motion.div>
-
-        {/* Timeline */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="mb-20"
-        >
-          <h2 className="text-4xl font-bold text-white mb-12 flex items-center gap-3">
-            <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full" />
-            Journey & Milestones
-          </h2>
-
-          {TIMELINE.length > 0 ? (
-            <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-purple-500 to-transparent transform md:-translate-x-1/2" />
-
-              {/* Timeline items */}
-              <div className="space-y-12">
-                {TIMELINE.map((item: { type: string; date: string; title: string; description: string }, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className={`flex gap-8 md:gap-0 ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
-                  >
-                    {/* Content */}
-                    <div className="flex-1 md:w-1/2 md:pr-12">
-                      <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-6 hover:border-cyan-500/50 transition-all">
-                        <div className="flex items-center gap-3 mb-3">
-                          {item.type === "work" ? (
-                            <Briefcase className="w-5 h-5 text-cyan-400" />
-                          ) : (
-                            <BookOpen className="w-5 h-5 text-purple-400" />
-                          )}
-                          <span className="text-sm font-semibold text-slate-400 uppercase">
-                            {item.date}
-                          </span>
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                        <p className="text-slate-300">{item.description}</p>
-                      </div>
-                    </div>
-
-                    {/* Timeline dot */}
-                    <div className="flex justify-center md:w-auto">
-                      <motion.div
-                        className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 border-4 border-slate-900 absolute left-[-9px] md:relative md:left-0"
-                        whileInView={{ scale: [1, 1.5, 1] }}
-                        transition={{ delay: index * 0.1 + 0.3, duration: 0.6 }}
-                        viewport={{ once: true }}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            <div className="h-full w-full overflow-hidden rounded-3xl bg-slate-50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/profile.png" alt={portfolioData.profile.name} className="h-full w-full object-cover" />
             </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12 px-6 rounded-lg border border-slate-700/50 bg-slate-800/30"
-            >
-              <p className="text-lg text-slate-400">No timeline added yet</p>
-              <p className="text-slate-500 text-sm">Add your timeline in `/lib/constants/skills.ts`</p>
-            </motion.div>
+          </motion.div>
+          {portfolioData.profile.openToWork && (
+            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+              </span>
+              {portfolioData.profile.status || "Open to Internship & Full-Time Opportunities"}
+            </div>
           )}
         </motion.div>
+      </motion.section>
 
-        {/* Skills Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6"
-        >
+      {/* SECTION 2: QUICK HIGHLIGHTS */}
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="mt-16 md:mt-20"
+      >
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:gap-6">
           {[
-            { label: "Years Experience", value: "5+" },
-            { label: "Projects Completed", value: "30+" },
-            { label: "Technologies", value: "20+" },
-            { label: "Happy Clients", value: "15+" },
+            { label: "Total Problems Solved", value: analytics?.summary.totalProblems ?? null, colorClass: "text-[#FFA116]" },
+            { label: "Contest Participations", value: analytics?.summary.totalContests ?? null, colorClass: "text-[#1F1C3F]" },
+            { label: "Current Coding Streak", value: analytics ? (analytics.summary.avgStreak || analytics.summary.maxStreak) : null, colorClass: "text-emerald-500" },
+            { label: "GitHub Repositories", value: githubStats.repos, colorClass: "text-slate-900" },
+            { label: "GitHub Contributions", value: githubStats.contributions, colorClass: "text-emerald-600" },
+            { label: "CGPA", value: portfolioData.education?.cgpa || "8.4", isStatic: true, colorClass: "text-blue-500" },
           ].map((stat, i) => (
-            <div
+            <motion.div
               key={i}
-              className="relative rounded-lg border border-slate-700/50 bg-slate-800/30 p-6 text-center hover:border-cyan-500/50 transition-all"
+              variants={itemVariants}
+              whileHover={{ y: -4 }}
+              className="flex flex-col items-start justify-center rounded-2xl border border-slate-200/80 bg-white/60 p-6 shadow-sm backdrop-blur-md transition-all hover:border-slate-300 hover:shadow-md"
             >
-              <p className="text-3xl font-bold text-cyan-400 mb-2">{stat.value}</p>
-              <p className="text-sm text-slate-400">{stat.label}</p>
-            </div>
+              <div className={`text-3xl font-bold tracking-tight ${stat.colorClass}`}>
+                <AnimatedCounter value={stat.value} isStatic={stat.isStatic} />
+              </div>
+              <div className="mt-2 text-sm font-medium text-slate-500">
+                {stat.label}
+              </div>
+            </motion.div>
           ))}
+        </div>
+      </motion.section>
+
+      {/* SECTION 3: TECH STACK */}
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="mt-16 md:mt-20"
+      >
+        <motion.h2 variants={itemVariants} className="mb-8 font-serif text-3xl font-semibold text-slate-900">
+          Tech Stack
+        </motion.h2>
+        <div className="flex flex-wrap gap-3">
+          {SKILLS.map((skill) => {
+            let Icon = Terminal;
+            let colorClass = "text-slate-700";
+            const s = skill.name.toLowerCase();
+            
+            if (s.includes("java") && !s.includes("script")) { Icon = Coffee; colorClass = "text-orange-600"; }
+            else if (s.includes("python")) { Icon = FileCode2; colorClass = "text-blue-600"; }
+            else if (s.includes("javascript")) { Icon = FileJson; colorClass = "text-amber-500"; }
+            else if (s.includes("html")) { Icon = Globe2; colorClass = "text-orange-500"; }
+            else if (s.includes("css") || s.includes("bootstrap")) { Icon = Palette; colorClass = "text-indigo-500"; }
+            else if (s.includes("react")) { Icon = Atom; colorClass = "text-cyan-500"; }
+            else if (s.includes("next")) { Icon = Triangle; colorClass = "text-slate-900"; }
+            else if (s.includes("tailwind")) { Icon = Wind; colorClass = "text-cyan-600"; }
+            else if (s.includes("flask") || s.includes("spring")) { Icon = FlaskConical; colorClass = "text-emerald-600"; }
+            else if (s.includes("api")) { Icon = Network; colorClass = "text-rose-500"; }
+            else if (s.includes("sql") || s.includes("database") || s.includes("dbms")) { Icon = Database; colorClass = "text-blue-500"; }
+            else if (s.includes("git")) { Icon = s.includes("hub") ? Code2 : GitBranch; colorClass = "text-orange-600"; }
+            else if (s.includes("ai") || s.includes("intelligence") || s.includes("prompt")) { Icon = BrainCircuit; colorClass = "text-purple-600"; }
+            else if (s.includes("machine learning")) { Icon = Cpu; colorClass = "text-violet-600"; }
+            else if (s.includes("network") || s.includes("packet")) { Icon = Network; colorClass = "text-teal-600"; }
+            else if (s.includes("structure") || s.includes("algorithm")) { Icon = Code2; colorClass = "text-fuchsia-600"; }
+            else if (s.includes("system") || s.includes("linux") || s.includes("architecture")) { Icon = Terminal; colorClass = "text-slate-800"; }
+
+            return (
+              <motion.div
+                key={skill.name}
+                variants={itemVariants}
+                whileHover={{ y: -2 }}
+                className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/60 px-4 py-2.5 shadow-sm backdrop-blur-md transition-all hover:border-slate-300 hover:bg-white"
+              >
+                <Icon size={16} className={colorClass} />
+                <span className={`text-sm font-semibold ${colorClass}`}>{skill.name}</span>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.section>
+
+      {/* SECTION 4: HIGHLIGHTED PROJECTS */}
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="mt-16 md:mt-20"
+      >
+        <motion.h2 variants={itemVariants} className="mb-8 font-serif text-3xl font-semibold text-slate-900">
+          Highlighted Projects
+        </motion.h2>
+        <div className="grid gap-8 md:grid-cols-2">
+          {FEATURED_PROJECTS.map((project) => (
+            <motion.div
+              key={project.id}
+              variants={itemVariants}
+              whileHover={{ y: -4 }}
+              className="group flex flex-col overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-xl"
+            >
+              <div className="relative h-56 w-full overflow-hidden border-b border-slate-100 bg-slate-50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={project.image} 
+                  alt={project.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+              </div>
+              <div className="flex flex-1 flex-col p-8">
+                <h3 className="text-xl font-bold tracking-tight text-slate-900">
+                  {project.title}
+                </h3>
+                <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
+                  {project.description}
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {project.techStack.map((tech: string) => (
+                    <span key={tech} className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-8 flex items-center gap-4">
+                  <Link 
+                    href={project.demo || "#"} 
+                    className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-slate-800"
+                  >
+                    Live Demo <ArrowUpRight size={16} />
+                  </Link>
+                  <Link 
+                    href={project.github || "#"}
+                    target="_blank"
+                    className="flex items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    <Code2 size={16} /> GitHub
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* SECTION 5: CALL TO ACTION */}
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="mt-16 md:mt-20"
+      >
+        <motion.div 
+          variants={itemVariants}
+          className="flex flex-col items-center justify-center rounded-[2.5rem] border border-slate-200/80 bg-white p-12 text-center shadow-[0_20px_40px_rgba(15,23,42,0.04)] sm:p-16"
+        >
+          <h2 className="font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Let&apos;s Build Something Amazing Together
+          </h2>
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <Link 
+              href="/contact"
+              className="flex items-center justify-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-sm font-medium text-white transition-all hover:scale-105 hover:bg-slate-800 hover:shadow-lg"
+            >
+              <MessageSquare size={18} /> Contact Me
+            </Link>
+            <Link 
+              href={portfolioData.education?.resume || "/resume.pdf"}
+              target="_blank"
+              className="flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-4 text-sm font-medium text-slate-700 transition-all hover:scale-105 hover:border-slate-300 hover:bg-slate-50 hover:shadow-lg"
+            >
+              <Download size={18} /> Download Resume
+            </Link>
+          </div>
         </motion.div>
-      </SectionContainer>
-    </main>
+      </motion.section>
+
+    </div>
   );
 }

@@ -4,7 +4,10 @@ import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import ProjectCard from "@/components/cards/ProjectCard";
 import SectionContainer from "@/components/layout/SectionContainer";
-import { ALL_PROJECTS, FEATURED_PROJECTS } from "@/lib/constants/projects";
+import portfolioData from "@/data/portfolio.json";
+
+const ALL_PROJECTS = portfolioData.projects;
+const FEATURED_PROJECTS = ALL_PROJECTS.filter((p: any) => p.featured);
 
 export default function ProjectsPage() {
   useEffect(() => {
@@ -25,7 +28,7 @@ export default function ProjectsPage() {
 
   return (
     <main className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.10),_transparent_35%),linear-gradient(180deg,#f8fcff_0%,#f4fbf8_100%)] text-slate-900">
-      <SectionContainer className="pt-10 sm:pt-12">
+      <SectionContainer className="pt-10 sm:pt-12 pb-10 sm:pb-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}

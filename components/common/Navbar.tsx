@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Sun } from 'lucide-react';
+import { Menu, X, Sun, UserCircle } from 'lucide-react';
 import { NAV_ITEMS } from '@/lib/constants/config';
+import LoginModal from '@/components/auth/LoginModal';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <header className="relative z-50 mx-auto max-w-[1400px] px-6 py-6 lg:px-12">
@@ -36,6 +38,13 @@ export default function Navbar() {
           <button className="rounded-full border border-slate-200/80 bg-white/90 p-2.5 text-slate-600 shadow-sm transition-colors hover:bg-slate-50">
             <Sun size={16} />
           </button>
+          
+          <button 
+            onClick={() => setLoginOpen(true)}
+            className="flex items-center justify-center rounded-full border border-slate-200/80 bg-white/90 p-2.5 text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-sky-600"
+          >
+            <UserCircle size={18} />
+          </button>
         </div>
 
         <button className="md:hidden p-2 text-slate-700" onClick={() => setOpen(!open)} aria-label="Toggle menu">
@@ -61,6 +70,8 @@ export default function Navbar() {
           </ul>
         </div>
       )}
+
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </header>
   );
 }

@@ -16,50 +16,16 @@ import {
   Sparkles,
   Sun,
   Trophy,
+  UserCircle,
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import AnimatedNumber from '@/components/dashboard/AnimatedNumber';
 import Footer from '@/components/common/Footer';
-import { NAV_ITEMS, SITE_CONFIG } from '@/lib/constants/config';
+import { NAV_ITEMS } from '@/lib/constants/config';
+import portfolioData from '@/data/portfolio.json';
 import type { AnalyticsDashboardData } from '@/lib/analytics/dashboard';
-
-type FeaturedProject = {
-  title: string;
-  description: string;
-  techStack: string[];
-  demo: string;
-  github: string;
-  tone: 'sky' | 'emerald';
-};
-
-type LiveMetric = {
-  label: string;
-  value: number;
-  suffix?: string;
-  icon: LucideIcon;
-  helper: string;
-  tone: 'sky' | 'emerald' | 'violet' | 'amber';
-};
-
-const FEATURED_PROJECTS: FeaturedProject[] = [
-  {
-    title: 'AI Mock Interview Platform',
-    description: 'An AI-powered interview preparation platform featuring real-time mock interviews, intelligent feedback, performance analytics, and personalized improvement recommendations.',
-    techStack: ['Next.js', 'TypeScript', 'Flask', 'AI', 'Tailwind CSS'],
-    demo: '/projects#ai-mock-interview-platform',
-    github: SITE_CONFIG.socialLinks.github,
-    tone: 'sky',
-  },
-  {
-    title: 'Offline Payment System Using Java & Mesh Technology',
-    description: 'A secure offline payment solution using mesh networking technology that enables transactions even without internet connectivity.',
-    techStack: ['Java', 'Mesh Networking', 'SQLite', 'JavaFX'],
-    demo: '/projects#offline-payment-system',
-    github: SITE_CONFIG.socialLinks.github,
-    tone: 'emerald',
-  },
-];
+import LoginModal from '@/components/auth/LoginModal';
 
 const HERO_ROLES = ['Software Engineer', 'Full Stack Developer', 'Backend Developer', 'AI Builder', 'Problem Solver', 'Competitive Programmer'];
 
@@ -77,12 +43,22 @@ function toneClasses(tone: LiveMetric['tone'] | FeaturedProject['tone']) {
   }
 }
 
+type LiveMetric = {
+  label: string;
+  value: number;
+  suffix?: string;
+  icon: LucideIcon;
+  helper: string;
+  tone: 'sky' | 'emerald' | 'violet' | 'amber';
+};
+
 const Hero = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
   const [analytics, setAnalytics] = useState<AnalyticsDashboardData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
-  
+
   // AI Chat States
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([
@@ -205,9 +181,9 @@ const Hero = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        
+
         if (!response.ok) throw new Error("API Error");
-        
+
         const data = await response.json();
         return data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't process that.";
       } catch {
@@ -228,7 +204,7 @@ const Hero = () => {
     setIsTyping(true);
 
     const aiReply = await fetchGeminiResponse(newUserMsg.text);
-    
+
     setChatMessages(prev => [...prev, { role: 'model', text: aiReply }]);
     setIsTyping(false);
   };
@@ -252,7 +228,12 @@ const Hero = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] rounded-full blur-[120px] -z-10 mix-blend-multiply opacity-60 pointer-events-none bg-gradient-to-r from-sky-100/30 via-emerald-100/20 to-white/0"></div>
 
         {/* Navigation */}
-          <nav className="relative z-50 flex items-center justify-between px-6 py-6 max-w-[1400px] mx-auto lg:px-12">
+        <motion.nav
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="relative z-50 mx-4 mt-6 lg:mx-auto max-w-[1400px] flex items-center justify-between px-2 lg:px-8"
+        >
           <div className="flex items-center gap-1 cursor-pointer group">
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
               <span className="text-2xl font-serif font-bold tracking-tight text-sky-800 group-hover:opacity-80 transition-opacity">Imran Khan</span>
@@ -262,12 +243,12 @@ const Hero = () => {
 
           {/* Right-aligned Desktop Menu & Actions */}
           <div className="hidden md:flex items-center gap-6 ml-auto">
-            <ul className="flex items-center gap-8 text-[13px] tracking-wide font-medium text-slate-600">
+            <ul className="flex items-center gap-3">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`${item.href === "/projects" ? "text-slate-900" : ""} hover:text-sky-700 transition-colors`}
+                    className={`block px-5 py-2.5 rounded-full border border-slate-200/80 bg-white/85 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${item.href === "/projects" ? "text-slate-900" : "text-slate-600"}`}
                   >
                     {item.label}
                   </Link>
@@ -275,21 +256,27 @@ const Hero = () => {
               ))}
             </ul>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button className="p-2.5 bg-white/50 backdrop-blur-md border border-gray-200/80 rounded-full hover:border-gray-300 hover:bg-white transition-all duration-300 text-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                 <Sun size={16} />
+              </button>
+              <button
+                onClick={() => setLoginOpen(true)}
+                className="p-2.5 bg-white/50 backdrop-blur-md border border-gray-200/80 rounded-full hover:border-gray-300 hover:bg-white transition-all duration-300 text-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:text-sky-600"
+              >
+                <UserCircle size={18} />
               </button>
             </div>
           </div>
 
           {/* Mobile Toggle */}
-          <button 
+          <button
             className="md:hidden p-2 text-gray-600"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-        </nav>
+        </motion.nav>
 
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
@@ -311,9 +298,9 @@ const Hero = () => {
         )}
 
         {/* Main Layout */}
-        <main className="relative max-w-[1400px] mx-auto px-6 lg:px-12 pt-10 lg:pt-18 pb-4 sm:pb-6 md:pb-8 lg:pb-10 flex flex-col gap-12 lg:gap-20">
+        <main className="relative max-w-[1400px] mx-auto px-6 lg:px-12 pt-4 lg:pt-6 pb-4 flex flex-col gap-4 lg:gap-6">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start w-full max-w-7xl mx-auto">
-            <section className="relative z-10 flex flex-col items-start text-left w-full pt-4 lg:pt-10">
+            <section className="relative z-10 flex flex-col items-start text-left w-full pt-2 lg:pt-4">
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-slate-200/80 bg-white/85 backdrop-blur-md shadow-[0_10px_30px_rgba(15,23,42,0.06)] mb-8 text-[10px] font-semibold tracking-[0.32em] text-slate-600 uppercase">
                 <Sparkles size={12} className="text-sky-500" />
                 <span>Software Engineer • Full Stack Developer • AI Builder</span>
@@ -343,10 +330,7 @@ const Hero = () => {
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className="text-[2.85rem] sm:text-6xl lg:text-[4.8rem] leading-[1.03] tracking-[-0.05em] font-serif text-slate-950 mb-6 max-w-3xl"
               >
-                Engineering scalable digital products with precision.
-                <span className="block mt-3 text-slate-500 font-light italic text-[0.9em]">
-                  Hi, I&apos;m Imran Khan.
-                </span>
+                Hi, I&apos;m {portfolioData.profile.name}.
               </motion.h1>
 
               <motion.p
@@ -355,7 +339,7 @@ const Hero = () => {
                 transition={{ duration: 0.55, delay: 0.1 }}
                 className="text-[1.05rem] sm:text-lg text-slate-500 font-light leading-[1.9] max-w-2xl"
               >
-                B.Tech Computer Science engineer with 8+ CGPA, focused on full-stack development, backend architecture, scalable systems, AI-powered products, and competitive programming.
+                {portfolioData.profile.summary}
               </motion.p>
 
               <div className="mt-10 grid w-full max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-2">
@@ -401,7 +385,7 @@ const Hero = () => {
                 <div className="rounded-full border border-emerald-200/70 bg-emerald-50 px-4 py-2 text-right shadow-[0_10px_24px_rgba(16,185,129,0.08)]">
                   <div className="flex items-center gap-2 text-emerald-900">
                     <BadgeCheck size={16} />
-                    <span className="text-lg font-semibold tracking-[-0.03em]">8+ CGPA</span>
+                    <span className="text-lg font-semibold tracking-[-0.03em]">{portfolioData.education?.cgpa || "8+"} CGPA</span>
                   </div>
                   <p className="mt-0.5 text-[11px] text-emerald-700/80">Academic performance, consistently strong</p>
                 </div>
@@ -409,12 +393,12 @@ const Hero = () => {
 
             </section>
 
-            <section className="relative z-10 w-full pt-2 lg:pt-6 lg:sticky lg:top-16 self-start">
+            <section className="relative z-10 w-full pt-0 lg:pt-2 lg:sticky lg:top-16 self-start">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative mx-auto w-full max-w-[560px]"
+                className="relative mx-auto w-full max-w-[800px]"
               >
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
@@ -422,15 +406,14 @@ const Hero = () => {
                   className="group relative overflow-hidden rounded-[3rem] border border-white/70 bg-white/80 p-3 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-sky-100/60 via-white/0 to-emerald-100/50 opacity-80" />
-                  <div className="relative overflow-hidden rounded-[2.4rem] border border-slate-100 bg-slate-100">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-70" />
+                  <div className="relative overflow-hidden rounded-[2.4rem] border border-slate-100 bg-slate-100 aspect-[4/5] lg:aspect-[3/4.2]">
+                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-70 pointer-events-none" />
                     <Image
                       src="/profile.png"
                       alt="Imran Khan portrait"
-                      width={1200}
-                      height={1500}
+                      fill
                       priority
-                      className="h-full w-full object-cover object-[center_16%] grayscale contrast-105 transition-transform duration-1000 group-hover:scale-[1.03]"
+                      className="object-cover object-[center_16%] grayscale contrast-105 transition-transform duration-1000 group-hover:scale-[1.03]"
                       sizes="(max-width: 1024px) 100vw, 45vw"
                     />
                   </div>
@@ -439,45 +422,47 @@ const Hero = () => {
                     Full stack • AI • DSA
                   </div>
 
-                  <div className="absolute bottom-6 right-6 flex items-center gap-2 rounded-full border border-white/75 bg-white/90 px-4 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                    </span>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-700">Available</span>
-                  </div>
+                  {portfolioData.profile.openToWork && (
+                    <div className="absolute bottom-6 right-6 flex items-center gap-2 rounded-full border border-white/75 bg-white/90 px-4 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                      </span>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-700">Available</span>
+                    </div>
+                  )}
                 </motion.div>
 
                 <div className="mt-5 grid w-full gap-5 sm:grid-cols-2">
-                  {FEATURED_PROJECTS.map((project, index) => (
+                  {portfolioData.projects.filter(p => p.featured).slice(0, 2).map((project: any, index) => (
                     <motion.article
                       key={project.title}
                       initial={{ opacity: 0, y: 18 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * index, duration: 0.5 }}
                       whileHover={{ y: -6, scale: 1.01 }}
-                      className={`relative overflow-hidden rounded-[2.25rem] border bg-gradient-to-br ${toneClasses(project.tone)} p-6 shadow-[0_18px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl`}
+                      className={`relative overflow-hidden rounded-3xl border bg-gradient-to-br ${toneClasses(index === 0 ? 'sky' : 'emerald')} p-4 sm:p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl`}
                     >
                       <div className="absolute inset-0 bg-white/45 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                       <div className="relative z-10 flex h-full flex-col">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">Featured Project</p>
-                        <h3 className="mt-3 text-[1.45rem] font-serif tracking-[-0.03em] text-slate-900">{project.title}</h3>
-                        <p className="mt-2 text-[0.96rem] leading-7 text-slate-600">{project.description}</p>
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.26em] text-slate-500">Featured Project</p>
+                        <h3 className="mt-1.5 text-[1.15rem] font-serif tracking-[-0.03em] text-slate-900 leading-snug">{project.title}</h3>
+                        <p className="mt-1.5 text-xs leading-5 text-slate-600 line-clamp-2">{project.description}</p>
 
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {project.techStack.map((tech) => (
-                            <span key={tech} className="rounded-full border border-white/80 bg-white/90 px-3.5 py-1.5 text-[11px] font-medium text-slate-700 shadow-[0_8px_18px_rgba(15,23,42,0.04)]">
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {project.techStack.map((tech: string) => (
+                            <span key={tech} className="rounded-full border border-white/80 bg-white/90 px-2.5 py-1 text-[10px] font-medium text-slate-700 shadow-[0_8px_18px_rgba(15,23,42,0.04)]">
                               {tech}
                             </span>
                           ))}
                         </div>
 
-                        <div className="mt-5 flex gap-2.5">
-                          <Link href={project.demo} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-sky-500 px-4.5 py-3 text-sm font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-sky-600 hover:shadow-[0_18px_30px_rgba(14,165,233,0.16)]">
-                            Live Demo <ExternalLink size={14} />
+                        <div className="mt-4 flex gap-2">
+                          <Link href={project.demo} className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-sky-500 py-2.5 text-xs font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-sky-600 hover:shadow-[0_18px_30px_rgba(14,165,233,0.16)]">
+                            Live Demo <ExternalLink size={12} />
                           </Link>
-                          <a href={project.github} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-sky-100 bg-white/90 px-4.5 py-3 text-sm font-medium text-slate-800 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-sky-50 hover:shadow-[0_18px_30px_rgba(15,23,42,0.08)]">
-                            GitHub <Code2 size={14} />
+                          <a href={project.github} target="_blank" rel="noreferrer" className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-sky-100 bg-white/90 py-2.5 text-xs font-medium text-slate-800 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-sky-50 hover:shadow-[0_18px_30px_rgba(15,23,42,0.08)]">
+                            GitHub <Code2 size={12} />
                           </a>
                         </div>
                       </div>
@@ -492,11 +477,13 @@ const Hero = () => {
           <Footer />
         </main>
 
+        <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+
         {/* AI Chat Modal Overlay */}
         {isChatOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden flex flex-col h-[500px] border border-gray-100 transform transition-all scale-100 animate-in zoom-in-95 duration-300">
-              
+
               {/* Chat Header */}
               <div className="flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50/50">
                 <div className="flex items-center gap-3">
@@ -510,7 +497,7 @@ const Hero = () => {
                     </p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsChatOpen(false)}
                   className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
@@ -522,16 +509,15 @@ const Hero = () => {
               <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 bg-white">
                 {chatMessages.map((msg, idx) => (
                   <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
-                      msg.role === 'user' 
-                        ? 'bg-gray-900 text-white rounded-br-sm' 
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${msg.role === 'user'
+                        ? 'bg-gray-900 text-white rounded-br-sm'
                         : 'bg-gray-100 text-gray-800 rounded-bl-sm'
-                    }`}>
+                      }`}>
                       {msg.text}
                     </div>
                   </div>
                 ))}
-                
+
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="bg-gray-100 text-gray-800 rounded-2xl rounded-bl-sm px-4 py-3.5 flex items-center gap-1.5">
@@ -546,7 +532,7 @@ const Hero = () => {
 
               {/* Chat Input Area */}
               <div className="p-4 bg-white border-t border-gray-100">
-                <form 
+                <form
                   onSubmit={handleSendMessage}
                   className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full p-1.5 pl-4 focus-within:border-gray-400 focus-within:bg-white transition-colors"
                 >
@@ -558,7 +544,7 @@ const Hero = () => {
                     className="flex-1 bg-transparent text-[13px] text-gray-900 placeholder-gray-400 outline-none w-full"
                     disabled={isTyping}
                   />
-                  <button 
+                  <button
                     type="submit"
                     disabled={!userInput.trim() || isTyping}
                     className="p-2.5 bg-gray-900 text-white rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"

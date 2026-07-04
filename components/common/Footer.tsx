@@ -22,13 +22,15 @@ import {
 	Bot,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { NAV_ITEMS, SITE_CONFIG } from "@/lib/constants/config";
+import { NAV_ITEMS } from "@/lib/constants/config";
+import portfolioData from "@/data/portfolio.json";
 import type { AnalyticsDashboardData } from '@/lib/analytics/dashboard';
 
 type SocialLink = {
 	label: string;
 	href: string;
 	icon: LucideIcon;
+	colorClass?: string;
 };
 
 type FooterLink = {
@@ -41,35 +43,37 @@ type TechItem = {
 	icon: LucideIcon;
 };
 
+const getPlatformUsername = (id: string) => portfolioData.platforms.find(p => p.id === id)?.username || "";
+
 const socialLinks: SocialLink[] = [
-	{ label: "GitHub", href: SITE_CONFIG.socialLinks.github, icon: Code2 },
-	{ label: "LinkedIn", href: SITE_CONFIG.socialLinks.linkedin, icon: Link2 },
-	{ label: "LeetCode", href: "https://leetcode.com/u/Imran_Khan_87/", icon: Trophy },
-	{ label: "Codeforces", href: "https://codeforces.com/profile/Imrankhan87", icon: Layers3 },
-	{ label: "CodeChef", href: "https://www.codechef.com/users/imran_khan_87", icon: Terminal },
-	{ label: "HackerRank", href: "https://www.hackerrank.com/profile/Imran_khan_87", icon: BookOpen },
-	{ label: "Email", href: `mailto:${SITE_CONFIG.email}`, icon: Mail },
+	{ label: "GitHub", href: portfolioData.contact.github, icon: Code2, colorClass: "text-[#24292E]" },
+	{ label: "LinkedIn", href: portfolioData.contact.linkedin, icon: Link2, colorClass: "text-[#0A66C2]" },
+	{ label: "LeetCode", href: `https://leetcode.com/u/${getPlatformUsername("leetcode")}/`, icon: Trophy, colorClass: "text-[#FFA116]" },
+	{ label: "Codeforces", href: `https://codeforces.com/profile/${getPlatformUsername("codeforces")}`, icon: Layers3, colorClass: "text-[#1F1C3F]" },
+	{ label: "CodeChef", href: `https://www.codechef.com/users/${getPlatformUsername("codechef")}`, icon: Terminal, colorClass: "text-[#5B4638]" },
+	{ label: "HackerRank", href: `https://www.hackerrank.com/profile/${getPlatformUsername("hackerrank")}`, icon: BookOpen, colorClass: "text-[#2EC866]" },
+	{ label: "Email", href: `mailto:${portfolioData.contact.email}`, icon: Mail, colorClass: "text-rose-500" },
 ];
 
-const featuredWork: FooterLink[] = [
-	{ label: "AI Interview Platform", href: "/projects" },
-	{ label: "Fraud Detection System", href: "/projects" },
-	{ label: "DSA Analytics Dashboard", href: "/analytics" },
-	{ label: "Portfolio Website", href: "/" },
-	{ label: "Open Source Projects", href: "/projects" },
-];
+const featuredWork: FooterLink[] = portfolioData.projects
+	.filter((p: any) => p.featured)
+	.slice(0, 5)
+	.map((p: any) => ({ label: p.title, href: "/projects" }));
+if (featuredWork.length < 5) {
+	featuredWork.push({ label: "Portfolio Website", href: "/" });
+	featuredWork.push({ label: "DSA Analytics Dashboard", href: "/analytics" });
+}
 
 const techStack: TechItem[] = [
-	{ label: "Next.js", icon: Sparkles },
-	{ label: "React", icon: Layers3 },
-	{ label: "TypeScript", icon: Code2 },
-	{ label: "Node.js", icon: Bot },
 	{ label: "Python", icon: Terminal },
 	{ label: "Java", icon: Code2 },
+	{ label: "Spring Boot", icon: Layers3 },
+	{ label: "REST APIs", icon: Code2 },
 	{ label: "Tailwind CSS", icon: Sparkles },
 	{ label: "MySQL", icon: Database },
-	{ label: "MongoDB", icon: Database },
+	{ label: "Machine Learning", icon: Bot },
 	{ label: "AI Integration", icon: Sparkles },
+	{ label: "Data Structures & Algorithms", icon: Layers3 },
 ];
 
 export default function Footer() {
@@ -77,57 +81,57 @@ export default function Footer() {
 	const [localTime, setLocalTime] = useState("");
 	const [emailAddress, setEmailAddress] = useState("");
 
-			const [analytics, setAnalytics] = useState<AnalyticsDashboardData | null>(null);
+	const [analytics, setAnalytics] = useState<AnalyticsDashboardData | null>(null);
 
-		useEffect(() => {
-			const controller = new AbortController();
+	useEffect(() => {
+		const controller = new AbortController();
 
-			async function loadAnalytics() {
-					try {
-					const res = await fetch('/api/analytics', { cache: 'no-store', signal: controller.signal });
-					if (!res.ok) throw new Error('failed');
-					const data = (await res.json()) as AnalyticsDashboardData;
-					if (!controller.signal.aborted) setAnalytics(data);
-				} catch {
-					if (!controller.signal.aborted) setAnalytics(null);
-					}
-				}
-
-			loadAnalytics();
-
-			return () => controller.abort();
-		}, []);
-
-		function toneClasses(tone: 'emerald' | 'violet' | 'amber' | 'sky') {
-			switch (tone) {
-				case 'emerald':
-					return 'from-emerald-50 via-white to-emerald-100/70 border-emerald-100';
-				case 'violet':
-					return 'from-violet-50 via-white to-violet-100/70 border-violet-100';
-				case 'amber':
-					return 'from-amber-50 via-white to-amber-100/70 border-amber-100';
-				case 'sky':
-				default:
-					return 'from-sky-50 via-white to-cyan-100/70 border-sky-100';
+		async function loadAnalytics() {
+			try {
+				const res = await fetch('/api/analytics', { cache: 'no-store', signal: controller.signal });
+				if (!res.ok) throw new Error('failed');
+				const data = (await res.json()) as AnalyticsDashboardData;
+				if (!controller.signal.aborted) setAnalytics(data);
+			} catch {
+				if (!controller.signal.aborted) setAnalytics(null);
 			}
 		}
 
-		function selectTonesFromAnalytics(data: AnalyticsDashboardData | null) {
-			if (!data) return { nav: 'sky', featured: 'sky', tech: 'sky' } as const;
+		loadAnalytics();
 
-			const totalProblems = data.summary.totalProblems ?? 0;
-			const totalContests = data.summary.totalContests ?? 0;
-			const platformCount = data.summary.platformCount ?? 0;
-			const streak = data.platforms.reduce((m, p) => (p.status === 'connected' && p.analytics ? Math.max(m, p.analytics.activeStreak ?? 0) : m), 0);
+		return () => controller.abort();
+	}, []);
 
-			const featured = totalProblems >= 1000 ? 'emerald' : totalProblems >= 300 ? 'sky' : 'violet';
-			const nav = platformCount >= 3 ? 'emerald' : platformCount === 2 ? 'sky' : 'violet';
-			const tech = totalContests >= 50 ? 'amber' : streak >= 14 ? 'emerald' : 'sky';
-
-			return { nav, featured, tech } as const;
+	function toneClasses(tone: 'emerald' | 'violet' | 'amber' | 'sky') {
+		switch (tone) {
+			case 'emerald':
+				return 'from-emerald-50 via-white to-emerald-100/70 border-emerald-100';
+			case 'violet':
+				return 'from-violet-50 via-white to-violet-100/70 border-violet-100';
+			case 'amber':
+				return 'from-amber-50 via-white to-amber-100/70 border-amber-100';
+			case 'sky':
+			default:
+				return 'from-sky-50 via-white to-cyan-100/70 border-sky-100';
 		}
+	}
 
-		const tones = selectTonesFromAnalytics(analytics);
+	function selectTonesFromAnalytics(data: AnalyticsDashboardData | null) {
+		if (!data) return { nav: 'sky', featured: 'sky', tech: 'sky' } as const;
+
+		const totalProblems = data.summary.totalProblems ?? 0;
+		const totalContests = data.summary.totalContests ?? 0;
+		const platformCount = data.summary.platformCount ?? 0;
+		const streak = data.platforms.reduce((m, p) => (p.status === 'connected' && p.analytics ? Math.max(m, p.analytics.activeStreak ?? 0) : m), 0);
+
+		const featured = totalProblems >= 1000 ? 'emerald' : totalProblems >= 300 ? 'sky' : 'violet';
+		const nav = platformCount >= 3 ? 'emerald' : platformCount === 2 ? 'sky' : 'violet';
+		const tech = totalContests >= 50 ? 'amber' : streak >= 14 ? 'emerald' : 'sky';
+
+		return { nav, featured, tech } as const;
+	}
+
+	const tones = selectTonesFromAnalytics(analytics);
 
 	useEffect(() => {
 		const updateTime = () => {
@@ -161,7 +165,7 @@ export default function Footer() {
 				: "Hello Imran,\n\nI found your portfolio and would like to connect.",
 		);
 
-		window.location.href = `mailto:${SITE_CONFIG.email}?subject=${subject}&body=${body}`;
+		window.location.href = `mailto:${portfolioData.contact.email}?subject=${subject}&body=${body}`;
 	};
 
 	return (
@@ -176,8 +180,8 @@ export default function Footer() {
 			<div className="absolute right-0 top-20 h-64 w-64 rounded-full bg-sky-200/40 blur-3xl" />
 			<div className="absolute left-10 bottom-0 h-64 w-64 rounded-full bg-emerald-200/35 blur-3xl" />
 
-			<div className="relative mx-auto max-w-7xl px-6 py-14 lg:px-8 lg:py-16">
-				<div className="grid gap-6 lg:grid-cols-14">
+			<div className="relative mx-auto max-w-7xl px-6 pt-8 pb-10 lg:px-8 lg:pt-10 lg:pb-12">
+				<div className="grid gap-4 lg:grid-cols-14">
 					<motion.section
 						initial={{ opacity: 0, y: 14 }}
 						whileInView={{ opacity: 1, y: 0 }}
@@ -191,15 +195,20 @@ export default function Footer() {
 						</div>
 
 						<div className="mt-6 space-y-3">
-							<h2 className="text-3xl font-serif tracking-[-0.04em] text-slate-950">Imran Khan</h2>
-							<p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">Software Engineer</p>
+							<h2 className="text-3xl font-serif tracking-[-0.04em] text-slate-950">{portfolioData.profile.name}</h2>
+							<p className="text-sm font-medium uppercase tracking-[0.28em] text-slate-500">{portfolioData.profile.title}</p>
 							<p className="max-w-md text-[0.98rem] leading-7 text-slate-600">
-								Building scalable software products with engineering precision, AI intelligence, and problem-solving excellence.
+								{portfolioData.profile.summary}
 							</p>
 						</div>
 
 						<div className="mt-6 flex flex-wrap gap-3">
-							{socialLinks.map((social, index) => (
+							{[...socialLinks, ...(portfolioData.contact.customLinks || []).map((link: any) => ({
+								label: link.label,
+								href: link.url,
+								icon: Link2,
+								colorClass: "text-slate-600"
+							}))].map((social, index) => (
 								<motion.a
 									key={social.label}
 									href={social.href}
@@ -211,10 +220,11 @@ export default function Footer() {
 									whileInView={{ opacity: 1, y: 0 }}
 									transition={{ delay: 0.03 * index, duration: 0.3 }}
 									viewport={{ once: true }}
-									className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-sky-50 bg-white text-slate-600 shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition-colors hover:border-sky-100 hover:bg-sky-50 hover:text-slate-900"
+									className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-sky-50 bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition-colors hover:border-sky-100 hover:bg-sky-50"
 									aria-label={social.label}
+									title={social.label}
 								>
-									<social.icon size={16} />
+									<social.icon size={16} className={social.colorClass} />
 								</motion.a>
 							))}
 						</div>
@@ -346,46 +356,45 @@ export default function Footer() {
 
 							<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
 								<div className="rounded-3xl border border-sky-100 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-									<div className="flex items-center gap-2 text-slate-500">
+									<div className="flex items-center gap-2 text-indigo-500">
 										<MapPin size={15} />
 										<span className="text-[10px] font-semibold uppercase tracking-[0.24em]">Location</span>
 									</div>
-									<p className="mt-3 text-sm font-medium text-slate-900">Ghaziabad, India</p>
+									<p className="mt-3 text-sm font-medium text-indigo-900">{portfolioData.contact.location}</p>
 								</div>
 
 								<div className="rounded-3xl border border-sky-100 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-									<div className="flex items-center gap-2 text-slate-500">
+									<div className="flex items-center gap-2 text-emerald-500">
 										<Sparkles size={15} />
 										<span className="text-[10px] font-semibold uppercase tracking-[0.24em]">Status</span>
 									</div>
-									<p className="mt-3 text-sm font-medium text-slate-900">Available for opportunities</p>
+									<p className="mt-3 text-sm font-medium text-emerald-900">{portfolioData.profile.status}</p>
 								</div>
 
 								<div className="rounded-3xl border border-sky-100 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-									<div className="flex items-center gap-2 text-slate-500">
+									<div className="flex items-center gap-2 text-orange-500">
 										<Flame size={15} />
 										<span className="text-[10px] font-semibold uppercase tracking-[0.24em]">Openness</span>
 									</div>
-									<p className="mt-3 text-sm font-medium text-slate-900">Open to work</p>
+									<p className="mt-3 text-sm font-medium text-orange-900">{portfolioData.profile.openToWork ? "Open to work" : "Not looking"}</p>
 								</div>
 
 								<div className="rounded-3xl border border-sky-100 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-									<div className="flex items-center gap-2 text-slate-500">
+									<div className="flex items-center gap-2 text-sky-500">
 										<Clock3 size={15} />
 										<span className="text-[10px] font-semibold uppercase tracking-[0.24em]">Local time</span>
 									</div>
-									<p className="mt-3 text-sm font-medium text-slate-900">{localTime || "Updating..."}</p>
+									<p className="mt-3 text-sm font-medium text-sky-900">{localTime || "Updating..."}</p>
 								</div>
 							</div>
 						</div>
 					</motion.section>
 				</div>
 
-				<div className="mt-10 border-t border-slate-200/80 bg-[#f8fafc]/90">
+				<div className="mt-5 border-t border-slate-200/80 bg-[#f8fafc]/90">
 					<div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 py-6 text-sm text-slate-600 lg:flex-row lg:items-center lg:justify-between lg:px-8">
 						<div className="space-y-1">
-							<p>© {currentYear} Imran Khan. All rights reserved.</p>
-							<p>Built with Next.js &amp; Tailwind CSS</p>
+							<p>© {currentYear} {portfolioData.profile.name}. All rights reserved.</p>
 						</div>
 
 						<div className="inline-flex items-center gap-2 self-start rounded-full border border-emerald-200/70 bg-emerald-50 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-800 lg:self-auto">
@@ -393,7 +402,7 @@ export default function Footer() {
 								<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
 								<span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
 							</span>
-							Available for opportunities
+							{portfolioData.profile.status}
 						</div>
 
 						<div className="flex flex-col items-start gap-3 lg:items-end">

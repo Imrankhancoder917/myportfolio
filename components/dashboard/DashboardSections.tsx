@@ -30,14 +30,7 @@ import { PLATFORM_NAMES } from "@/lib/constants/config";
 import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
 import { formatInteger, formatStreak } from "@/lib/utils/formatters";
 
-export type ChartRange = "all" | "thirty" | "ninety" | "year";
-
-const rangeTabs: Array<{ key: ChartRange; label: string }> = [
-  { key: "all", label: "All Time" },
-  { key: "thirty", label: "30 Days" },
-  { key: "ninety", label: "90 Days" },
-  { key: "year", label: "This Year" },
-];
+import { ChartRange } from "@/lib/analytics/dashboard";
 
 interface SharedProps {
   data: AnalyticsDashboardData;
@@ -83,7 +76,6 @@ function buildHeatmapSeed(summaryValue: number, spreadValue: number) {
 
 export function OverviewStats({ data, connectedPlatforms }: Pick<SectionProps, "data" | "connectedPlatforms">) {
   const currentStreak = connectedPlatforms.reduce((max, item) => Math.max(max, item.analytics?.activeStreak ?? 0), 0);
-  const acceptanceRate = data.summary.completionRate;
 
   const stats = [
     { label: "Total Problems Solved", value: data.summary.totalProblems, icon: Code2, suffix: "" },
@@ -91,7 +83,7 @@ export function OverviewStats({ data, connectedPlatforms }: Pick<SectionProps, "
     { label: "Current Streak", value: currentStreak, icon: Flame, suffix: " Days" },
     { label: "Longest Streak", value: data.summary.maxStreak, icon: Trophy, suffix: " Days" },
     { label: "Contest Participations", value: data.summary.totalContests, icon: Medal, suffix: " Contests" },
-    { label: "Acceptance Rate", value: acceptanceRate, icon: BadgeCheck, suffix: "%" },
+    { label: "Platform Coverage", value: data.summary.completionRate, icon: BadgeCheck, suffix: "%" },
   ];
 
   return (
@@ -108,7 +100,7 @@ export function OverviewStats({ data, connectedPlatforms }: Pick<SectionProps, "
             viewport={{ once: true }}
             transition={{ duration: 0.45, delay: index * 0.05 }}
             whileHover={{ y: -4 }}
-            className="flex min-h-[11rem] flex-col justify-between rounded-[1.5rem] border border-sky-50 bg-white p-5 shadow-[0_14px_40px_rgba(14,165,233,0.04)] transition-shadow hover:shadow-[0_24px_70px_rgba(20,184,166,0.06)]"
+            className="flex min-h-[8.5rem] flex-col justify-between rounded-[1.5rem] border border-sky-50 bg-white p-5 shadow-[0_14px_40px_rgba(14,165,233,0.04)] transition-shadow hover:shadow-[0_24px_70px_rgba(20,184,166,0.06)]"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
@@ -167,23 +159,6 @@ export function ChartWorkspace({ data, chartRange, onRangeChange }: Pick<Section
               Premium live snapshot of problem solving, contest performance, platform comparison, and rating progression.
             </p>
           </div>
-
-          <div className="flex flex-wrap gap-2 rounded-full border border-slate-200 bg-slate-50 p-1">
-            {rangeTabs.map((tab) => {
-              const active = chartRange === tab.key;
-              return (
-                  <button
-                  key={tab.key}
-                  onClick={() => onRangeChange(tab.key)}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                    active ? "bg-gradient-to-r from-sky-600 to-emerald-600 text-white shadow-lg shadow-sky-200/70" : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
 
@@ -205,7 +180,7 @@ export function ChartWorkspace({ data, chartRange, onRangeChange }: Pick<Section
             </ChartFrame>
           )}
 
-          {chartRange === "thirty" && (
+          {(chartRange === "30_days" || chartRange === "60_days") && (
             <ChartFrame title="Contest history" subtitle="A sleek line-based view of contest activity across connected platforms.">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
@@ -221,7 +196,7 @@ export function ChartWorkspace({ data, chartRange, onRangeChange }: Pick<Section
             </ChartFrame>
           )}
 
-          {chartRange === "ninety" && (
+          {(chartRange === "3_months" || chartRange === "6_months") && (
             <ChartFrame title="Platform comparison" subtitle="Radar balance of solved counts, contests, streaks, and ratings.">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData}>
@@ -237,7 +212,7 @@ export function ChartWorkspace({ data, chartRange, onRangeChange }: Pick<Section
             </ChartFrame>
           )}
 
-          {chartRange === "year" && (
+          {chartRange === "1_year" && (
             <ChartFrame title="Rating progression" subtitle="A refined score view for your strongest platforms and contest footprint.">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
@@ -539,12 +514,20 @@ export function ActivityHeatmap({ data }: Pick<SectionProps, "data">) {
 
 export function RecentActivity({ data }: Pick<SectionProps, "data">) {
   const topPlatform = data.summary.topPlatform?.label ?? "your top platform";
-  const activities = [
-    { title: `Solved ${formatInteger(data.summary.topPlatform?.totalSolved ?? data.summary.totalProblems)} problems on ${topPlatform}`, time: "Just now", icon: Code2, tone: "sky" },
-    { title: `${formatInteger(data.summary.totalContests)} contest participations tracked`, time: "Today", icon: Trophy, tone: "teal" },
-    { title: `${formatStreak(data.summary.maxStreak)} longest streak maintained`, time: "Today", icon: Flame, tone: "emerald" },
-    { title: "GitHub repository activity synced", time: "1h ago", icon: GitBranch, tone: "violet" },
-    { title: "Achievement velocity updated", time: "Earlier", icon: BadgeCheck, tone: "sky" },
+  
+  const updatedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  }).format(new Date(data.summary.lastUpdated));
+
+  const syncText = `Synced at ${updatedTime}`;
+
+  const activities: Array<{ title: string; time: string; icon: React.ComponentType<{ className?: string }>; tone: "sky" | "teal" | "emerald" | "violet" }> = [
+    { title: `Solved ${formatInteger(data.summary.topPlatform?.totalSolved ?? data.summary.totalProblems)} problems on ${topPlatform}`, time: syncText, icon: Code2, tone: "sky" },
+    { title: `${formatInteger(data.summary.totalContests)} contest participations tracked`, time: syncText, icon: Trophy, tone: "teal" },
+    { title: `${formatStreak(data.summary.maxStreak)} longest streak maintained`, time: syncText, icon: Flame, tone: "emerald" },
+    { title: "GitHub repository activity synced", time: syncText, icon: GitBranch, tone: "violet" },
   ];
 
   return (

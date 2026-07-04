@@ -27,7 +27,7 @@ export const ALL_PROJECTS: Project[] = [
     overview:
       "A polished interview practice experience that blends AI feedback, analytics, and structured simulations to help candidates improve faster.",
     category: "AI",
-    techStack: ["Next.js", "TypeScript", "Flask", "AI", "Tailwind CSS"],
+    techStack: ["Flask", "AI", "Tailwind CSS"],
     image: PROJECT_IMAGES.aiInterview,
     images: [PROJECT_IMAGES.aiInterview],
     github: SITE_CONFIG.socialLinks.github,
@@ -42,7 +42,7 @@ export const ALL_PROJECTS: Project[] = [
     overview:
       "An edge-first transaction system designed for resilience, local-first workflows, and secure payment exchange across mesh-connected devices.",
     category: "Backend",
-    techStack: ["Java", "Mesh Networking", "SQLite", "JavaFX"],
+    techStack: ["Java", "Mesh Networking"],
     image: PROJECT_IMAGES.offlinePayment,
     images: [PROJECT_IMAGES.offlinePayment],
     github: SITE_CONFIG.socialLinks.github,

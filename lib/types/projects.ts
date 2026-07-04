@@ -17,6 +17,7 @@ export type SkillLevel = "beginner" | "intermediate" | "advanced" | "expert";
 
 export type SkillCategory =
   | "Programming Languages"
+  | "Front End"
   | "Frontend Development"
   | "Backend Development"
   | "Database"

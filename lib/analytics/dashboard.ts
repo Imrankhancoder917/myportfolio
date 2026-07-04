@@ -1,8 +1,20 @@
 import { PLATFORM_COLORS, PLATFORM_NAMES } from "@/lib/constants/config";
 import { getAdapterStats, type AdapterType, type PlatformConfig } from "@/lib/adapters";
 import type { UnifiedAnalytics } from "@/lib/types/analytics";
+import portfolioData from "@/data/portfolio.json";
 
 export type AnalyticsPlatformKey = AdapterType | "all";
+
+export type ChartRange = "all" | "30_days" | "60_days" | "3_months" | "6_months" | "1_year";
+
+export const RANGE_OPTIONS: Array<{ key: ChartRange; label: string; scale: number }> = [
+  { key: "all", label: "All Time", scale: 1.0 },
+  { key: "1_year", label: "1 Year", scale: 0.8 },
+  { key: "6_months", label: "6 Months", scale: 0.45 },
+  { key: "3_months", label: "3 Months", scale: 0.25 },
+  { key: "60_days", label: "60 Days", scale: 0.15 },
+  { key: "30_days", label: "30 Days", scale: 0.08 },
+];
 
 export type PlatformStatus = "connected" | "missing" | "error";
 
@@ -46,13 +58,15 @@ export interface AnalyticsDashboardData {
   platforms: DashboardPlatformSnapshot[];
 }
 
+const getUsername = (id: string) => portfolioData.platforms.find((p: any) => p.id === id)?.username || "";
+
 const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; envTokenKey?: string }> = [
   {
     platform: "leetcode",
     label: PLATFORM_NAMES.leetcode,
     color: PLATFORM_COLORS.leetcode,
     description: "Interview problem solving",
-    username: "Imran_Khan_87",
+    username: getUsername("leetcode"),
     envUserKey: "LEETCODE_USERNAME",
   },
   {
@@ -60,7 +74,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.codeforces,
     color: PLATFORM_COLORS.codeforces,
     description: "Contest performance and rating",
-    username: process.env.CODEFORCES_HANDLE ?? "Imrankhan87",
+    username: getUsername("codeforces"),
     envUserKey: "CODEFORCES_HANDLE",
   },
   {
@@ -68,7 +82,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.codechef,
     color: PLATFORM_COLORS.codechef,
     description: "Algorithmic contests and ladders",
-    username: "imran_khan_87",
+    username: getUsername("codechef"),
     envUserKey: "CODECHEF_USERNAME",
   },
   {
@@ -76,7 +90,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.hackerrank,
     color: PLATFORM_COLORS.hackerrank,
     description: "Skill badges and challenges",
-    username: process.env.HACKERRANK_USERNAME ?? "Imran_khan_87",
+    username: getUsername("hackerrank"),
     envUserKey: "HACKERRANK_USERNAME",
   },
   {
@@ -84,7 +98,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.gfg,
     color: PLATFORM_COLORS.gfg,
     description: "Practice streak and problem bank",
-    username: "ik337vgef",
+    username: getUsername("gfg"),
     envUserKey: "GFG_USERNAME",
   },
   {
@@ -92,7 +106,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.github,
     color: PLATFORM_COLORS.github,
     description: "Repository activity and public footprint",
-    username: process.env.GITHUB_USERNAME ?? "",
+    username: getUsername("github"),
     token: process.env.GITHUB_TOKEN,
     envUserKey: "GITHUB_USERNAME",
     envTokenKey: "GITHUB_TOKEN",
@@ -102,7 +116,7 @@ const platformAccounts: Array<AnalyticsAccountConfig & { envUserKey: string; env
     label: PLATFORM_NAMES.atcoder,
     color: PLATFORM_COLORS.atcoder,
     description: "Optional future-ready contest support",
-    username: "Imran_khan_87",
+    username: getUsername("atcoder"),
     envUserKey: "ATCODER_USERNAME",
   },
 ];

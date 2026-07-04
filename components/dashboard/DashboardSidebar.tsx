@@ -16,6 +16,7 @@ import {
   Workflow,
   Sparkles,
 } from "lucide-react";
+import portfolioData from "@/data/portfolio.json";
 
 const navigation = [
   { label: "Dashboard", href: "#overview", icon: LayoutDashboard },
@@ -93,7 +94,7 @@ export default function DashboardSidebar({ githubHref }: DashboardSidebarProps) 
                 <Workflow className="h-4 w-4 text-violet-500" />
                 Skills
               </Link>
-              <Link href="/resume.pdf" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
+              <Link href={portfolioData.education?.resume || "/resume.pdf"} target="_blank" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
                 <Sparkles className="h-4 w-4 text-sky-500" />
                 Resume
               </Link>
