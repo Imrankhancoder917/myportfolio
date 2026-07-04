@@ -29,7 +29,9 @@ import LoginModal from '@/components/auth/LoginModal';
 
 const HERO_ROLES = ['Software Engineer', 'Full Stack Developer', 'Backend Developer', 'AI Builder', 'Problem Solver', 'Competitive Programmer'];
 
-function toneClasses(tone: LiveMetric['tone'] | FeaturedProject['tone']) {
+type Tone = 'sky' | 'emerald' | 'violet' | 'amber';
+
+function toneClasses(tone: Tone) {
   switch (tone) {
     case 'emerald':
       return 'from-emerald-50 via-white to-emerald-100/70 border-emerald-100';
@@ -49,7 +51,7 @@ type LiveMetric = {
   suffix?: string;
   icon: LucideIcon;
   helper: string;
-  tone: 'sky' | 'emerald' | 'violet' | 'amber';
+  tone: Tone;
 };
 
 const Hero = () => {

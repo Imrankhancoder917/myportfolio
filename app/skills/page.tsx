@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import SectionContainer from "@/components/layout/SectionContainer";
 import SkillCard from "@/components/cards/SkillCard";
 import portfolioData from "@/data/portfolio.json";
+import { Skill, SkillSection } from "@/lib/types/projects";
 
-const SKILL_SECTIONS = portfolioData.skills;
-const SKILLS = portfolioData.skills.flatMap((section: any) => section.skills);
+const SKILL_SECTIONS = portfolioData.skills as unknown as SkillSection[];
+const SKILLS = SKILL_SECTIONS.flatMap((section) => section.skills);
 const ALL_PROJECTS = portfolioData.projects;
 
 function AnimatedCounter({ value }: { value: number }) {

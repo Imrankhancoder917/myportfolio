@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import ProjectCard from "@/components/cards/ProjectCard";
 import SectionContainer from "@/components/layout/SectionContainer";
 import portfolioData from "@/data/portfolio.json";
+import { Project } from "@/lib/types/projects";
 
-const ALL_PROJECTS = portfolioData.projects;
-const FEATURED_PROJECTS = ALL_PROJECTS.filter((p: any) => p.featured);
+const ALL_PROJECTS = portfolioData.projects as unknown as Project[];
+const FEATURED_PROJECTS = ALL_PROJECTS.filter((p: Project) => p.featured);
 
 export default function ProjectsPage() {
   useEffect(() => {

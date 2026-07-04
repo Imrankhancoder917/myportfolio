@@ -4,9 +4,28 @@ import React, { useState } from "react";
 import { useAdmin } from "@/components/admin/AdminProvider";
 import { Check } from "lucide-react";
 
+interface CustomLink {
+  label: string;
+  url: string;
+}
+
+interface ContactState {
+  email: string;
+  phone: string;
+  location: string;
+  linkedin: string;
+  github: string;
+  twitter: string;
+  whatsapp: string;
+  customLinks: CustomLink[];
+}
+
 export default function ContactAdmin() {
   const { draft, updateSection } = useAdmin();
-  const [contact, setContact] = useState(draft.contact);
+  const [contact, setContact] = useState<ContactState>({
+    ...draft.contact,
+    customLinks: draft.contact.customLinks || [],
+  });
   const [deletedMessage, setDeletedMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
