@@ -69,7 +69,7 @@ export default function SkillsPage() {
             transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="mt-5 max-w-3xl text-lg leading-8 text-slate-600"
           >
-            A carefully selected technology stack built through real-world projects, competitive programming, and continuous learning—covering modern web development, backend engineering, databases, artificial intelligence, and software engineering fundamentals.
+            A curated technology stack built through real-world projects, competitive programming, and continuous learning—focused on full-stack development, backend engineering, AI, databases, and scalable software systems.
           </motion.p>
         </motion.div>
 

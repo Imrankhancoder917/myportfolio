@@ -152,7 +152,7 @@ export default function AnalyticsDashboard({ initialData }: AnalyticsDashboardPr
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.10),_transparent_35%),linear-gradient(180deg,#f8fcff_0%,#f4fbf8_100%)] text-slate-900">
-      <div className="mx-auto grid w-full max-w-[1680px] gap-6 px-4 py-4 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8 lg:py-6 xl:grid-cols-[20rem_minmax(0,1fr)]">
+      <div className="mx-auto grid w-full max-w-[1680px] gap-6 px-4 pb-4 pt-0 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8 lg:pb-6 lg:pt-0 xl:grid-cols-[20rem_minmax(0,1fr)]">
         <DashboardSidebar githubHref={githubHref} />
 
         <div className="min-w-0 space-y-4">

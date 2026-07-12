@@ -43,8 +43,7 @@ export default function ProjectsPage() {
             Projects & Case Studies
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-            Real engineering work presented with the same premium light aesthetic as the hero
-            section, with each card emphasizing product quality, technical depth, and polished interaction design.
+            A collection of real-world software projects showcasing full-stack development, backend engineering, AI integration, and scalable system design. Each project reflects practical problem-solving, clean architecture, and modern development practices.
           </p>
         </motion.div>
 
@@ -55,7 +54,7 @@ export default function ProjectsPage() {
                 Featured Projects
               </p>
               <h2 className="mt-3 text-3xl font-serif font-semibold tracking-[-0.03em] text-slate-900">
-                Premium spotlight cards
+                Software Showcase
               </h2>
             </div>
           </div>
@@ -87,7 +86,7 @@ export default function ProjectsPage() {
                 All Projects
               </p>
               <h2 className="mt-3 text-3xl font-serif font-semibold tracking-[-0.03em] text-slate-900">
-                Full showcase grid
+                All Projects
               </h2>
             </div>
           </div>

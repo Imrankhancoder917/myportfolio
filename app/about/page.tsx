@@ -50,10 +50,10 @@ function AnimatedCounter({ value, isStatic }: { value: number | null | string, i
   useEffect(() => {
     if (isStatic) return;
     if (value === null || typeof value === 'string') return;
-    
+
     let startTime: number | null = null;
     const duration = 1500;
-    
+
     const animate = (time: number) => {
       if (!startTime) startTime = time;
       const progress = time - startTime;
@@ -65,7 +65,7 @@ function AnimatedCounter({ value, isStatic }: { value: number | null | string, i
         setCount(value);
       }
     };
-    
+
     const rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
   }, [value, isStatic]);
@@ -117,11 +117,11 @@ export default function AboutPage() {
 
   return (
     <div className="relative mx-auto max-w-5xl px-6 py-8 md:py-12 lg:px-8">
-      
+
       {/* SECTION 1: HERO */}
-      <motion.section 
-        variants={containerVariants} 
-        initial="hidden" 
+      <motion.section
+        variants={containerVariants}
+        initial="hidden"
         animate="show"
         className="grid items-center gap-12 md:grid-cols-2 lg:gap-20"
       >
@@ -131,11 +131,11 @@ export default function AboutPage() {
               About Me
             </span>
           </motion.div>
-          
+
           <motion.h1 variants={itemVariants} className="font-serif text-5xl font-semibold tracking-tight text-slate-900 md:text-6xl">
             Hi, I&apos;m {portfolioData.profile.name}
           </motion.h1>
-          
+
           <motion.div variants={itemVariants} className="mt-4 h-8 text-lg font-medium text-slate-500 md:text-xl">
             <AnimatePresence mode="wait">
               <motion.span
@@ -169,15 +169,13 @@ export default function AboutPage() {
         </div>
 
         <motion.div variants={itemVariants} className="flex flex-col items-center gap-6">
-          <motion.div 
-            animate={{ y: [0, -8, 0] }} 
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative h-72 w-72 overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-2 shadow-xl md:h-96 md:w-96"
+          <motion.div
+            animate={{ y: [-6, 6, -6] }}
+            transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative h-72 w-72 md:h-96 md:w-96 drop-shadow-[0_24px_48px_rgba(0,0,0,0.15)] group"
           >
-            <div className="h-full w-full overflow-hidden rounded-3xl bg-slate-50">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/profile.png" alt={portfolioData.profile.name} className="h-full w-full object-cover" />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/profile.png" alt={portfolioData.profile.name} className="h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.03] group-hover:brightness-[1.03] group-hover:contrast-[1.02] group-hover:drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]" />
           </motion.div>
           {portfolioData.profile.openToWork && (
             <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm">
@@ -241,7 +239,7 @@ export default function AboutPage() {
             let Icon = Terminal;
             let colorClass = "text-slate-700";
             const s = skill.name.toLowerCase();
-            
+
             if (s.includes("java") && !s.includes("script")) { Icon = Coffee; colorClass = "text-orange-600"; }
             else if (s.includes("python")) { Icon = FileCode2; colorClass = "text-blue-600"; }
             else if (s.includes("javascript")) { Icon = FileJson; colorClass = "text-amber-500"; }
@@ -296,10 +294,10 @@ export default function AboutPage() {
             >
               <div className="relative h-56 w-full overflow-hidden border-b border-slate-100 bg-slate-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={project.image} 
+                <img
+                  src={project.image}
                   alt={project.title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex flex-1 flex-col p-8">
@@ -317,13 +315,13 @@ export default function AboutPage() {
                   ))}
                 </div>
                 <div className="mt-8 flex items-center gap-4">
-                  <Link 
-                    href={project.demo || "#"} 
+                  <Link
+                    href={project.demo || "#"}
                     className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-slate-800"
                   >
                     Live Demo <ArrowUpRight size={16} />
                   </Link>
-                  <Link 
+                  <Link
                     href={project.github || "#"}
                     target="_blank"
                     className="flex items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
@@ -345,7 +343,7 @@ export default function AboutPage() {
         variants={containerVariants}
         className="mt-16 md:mt-20"
       >
-        <motion.div 
+        <motion.div
           variants={itemVariants}
           className="flex flex-col items-center justify-center rounded-[2.5rem] border border-slate-200/80 bg-white p-12 text-center shadow-[0_20px_40px_rgba(15,23,42,0.04)] sm:p-16"
         >
@@ -353,13 +351,13 @@ export default function AboutPage() {
             Let&apos;s Build Something Amazing Together
           </h2>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link 
+            <Link
               href="/contact"
               className="flex items-center justify-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-sm font-medium text-white transition-all hover:scale-105 hover:bg-slate-800 hover:shadow-lg"
             >
               <MessageSquare size={18} /> Contact Me
             </Link>
-            <Link 
+            <Link
               href={portfolioData.education?.resume || "/resume.pdf"}
               target="_blank"
               className="flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-8 py-4 text-sm font-medium text-slate-700 transition-all hover:scale-105 hover:border-slate-300 hover:bg-slate-50 hover:shadow-lg"

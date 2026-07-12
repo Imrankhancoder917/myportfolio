@@ -9,7 +9,7 @@ export async function GET() {
       name: SITE_CONFIG.author,
       title: "Software Engineer",
       summary: "Building scalable software products with engineering precision, AI intelligence, and problem-solving excellence.",
-      about: "A carefully selected technology stack built through real-world projects, competitive programming, and continuous learning—covering modern web development, backend engineering, databases, artificial intelligence, and software engineering fundamentals.",
+      about: "A curated technology stack built through real-world projects, competitive programming, and continuous learning—focused on full-stack development, backend engineering, AI, databases, and scalable software systems.",
       location: "Greater Noida, India",
       cgpa: "",
       status: "Available for opportunities",

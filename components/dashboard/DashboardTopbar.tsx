@@ -48,7 +48,7 @@ export default function DashboardTopbar({
         <div className="flex-1">
           <p className="text-xs uppercase tracking-[0.34em] text-slate-400">Live analytics</p>
           <h2 className="mt-1 text-2xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-3xl">
-            DSA dashboard for problem solving and platform performance
+            DSA Progress & Analytics
           </h2>
         </div>
 

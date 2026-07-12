@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import {
   BadgeCheck,
   Bot,
@@ -52,9 +52,34 @@ type LiveMetric = {
   icon: LucideIcon;
   helper: string;
   tone: Tone;
+  customValueDisplay?: string;
 };
 
 const Hero = () => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const smoothMouseX = useSpring(mouseX, { damping: 50, stiffness: 400 });
+  const smoothMouseY = useSpring(mouseY, { damping: 50, stiffness: 400 });
+
+  const rotateX = useTransform(smoothMouseY, [-1, 1], [2, -2]);
+  const rotateY = useTransform(smoothMouseX, [-1, 1], [-2, 2]);
+  const translateX = useTransform(smoothMouseX, [-1, 1], [-10, 10]);
+  const translateY = useTransform(smoothMouseY, [-1, 1], [-10, 10]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width * 2 - 1;
+    const y = (e.clientY - rect.top) / rect.height * 2 - 1;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [activeRoleIndex, setActiveRoleIndex] = useState(0);
@@ -118,14 +143,21 @@ const Hero = () => {
     loadAnalytics();
 
     return () => controller.abort();
-  }, []);
-
-  const currentStreak = useMemo(() => {
+  }, []);  const currentStreak = useMemo(() => {
     if (!analytics) return 0;
-
     return analytics.platforms.reduce((max, platform) => {
       if (platform.status !== 'connected' || !platform.analytics) return max;
       return Math.max(max, platform.analytics.activeStreak);
+    }, 0);
+  }, [analytics]);
+
+  const highestRating = useMemo(() => {
+    if (!analytics) return 0;
+    return analytics.platforms.reduce((max, platform) => {
+      if (platform.status !== 'connected' || !platform.analytics) return max;
+      const validPlatforms = ['codeforces', 'leetcode', 'codechef', 'atcoder'];
+      if (!validPlatforms.includes(platform.platform)) return max;
+      return Math.max(max, platform.analytics.rating || 0);
     }, 0);
   }, [analytics]);
 
@@ -153,11 +185,12 @@ const Hero = () => {
       tone: 'emerald',
     },
     {
-      label: 'Active Platforms',
-      value: analytics?.summary.platformCount ?? 0,
+      label: 'Contest Rating',
+      value: highestRating > 0 ? highestRating : 0,
       icon: Layers3,
-      helper: 'Connected DSA sources',
+      helper: highestRating > 0 ? 'Highest Contest Rating' : 'No Rating Available',
       tone: 'amber',
+      customValueDisplay: highestRating > 0 ? undefined : '—',
     },
   ];
 
@@ -229,75 +262,7 @@ const Hero = () => {
         {/* Ambient Background Glows - Blue / Green Subtle */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] rounded-full blur-[120px] -z-10 mix-blend-multiply opacity-60 pointer-events-none bg-gradient-to-r from-sky-100/30 via-emerald-100/20 to-white/0"></div>
 
-        {/* Navigation */}
-        <motion.nav
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="relative z-50 mx-4 mt-6 lg:mx-auto max-w-[1400px] flex items-center justify-between px-2 lg:px-8"
-        >
-          <div className="flex items-center gap-1 cursor-pointer group">
-            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
-              <span className="text-2xl font-serif font-bold tracking-tight text-sky-800 group-hover:opacity-80 transition-opacity">Imran Khan</span>
-              <div className="w-1.5 h-1.5 bg-gray-900 rounded-full mb-3" />
-            </Link>
-          </div>
 
-          {/* Right-aligned Desktop Menu & Actions */}
-          <div className="hidden md:flex items-center gap-6 ml-auto">
-            <ul className="flex items-center gap-3">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`block px-5 py-2.5 rounded-full border border-slate-200/80 bg-white/85 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${item.href === "/projects" ? "text-slate-900" : "text-slate-600"}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex items-center gap-3">
-              <button className="p-2.5 bg-white/50 backdrop-blur-md border border-gray-200/80 rounded-full hover:border-gray-300 hover:bg-white transition-all duration-300 text-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <Sun size={16} />
-              </button>
-              <button
-                onClick={() => setLoginOpen(true)}
-                className="p-2.5 bg-white/50 backdrop-blur-md border border-gray-200/80 rounded-full hover:border-gray-300 hover:bg-white transition-all duration-300 text-gray-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:text-sky-600"
-              >
-                <UserCircle size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Toggle */}
-          <button
-            className="md:hidden p-2 text-gray-600"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </motion.nav>
-
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div className="md:hidden absolute top-24 left-4 right-4 bg-white/95 backdrop-blur-xl z-50 border border-gray-100 rounded-3xl shadow-2xl p-6">
-            <ul className="flex flex-col gap-5 text-base font-medium text-gray-600">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={item.href === "/projects" ? "text-gray-900" : ""}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         {/* Main Layout */}
         <main className="relative max-w-[1400px] mx-auto px-6 lg:px-12 pt-4 lg:pt-6 pb-4 flex flex-col gap-4 lg:gap-6">
@@ -363,7 +328,13 @@ const Hero = () => {
                               <div className="h-12 w-28 animate-pulse rounded-xl bg-slate-200/80" />
                             ) : (
                               <>
-                                <AnimatedNumber value={metric.value} className="text-4xl sm:text-[2.9rem] font-serif tracking-[-0.05em] leading-none" />
+                                {metric.customValueDisplay !== undefined ? (
+                                  <span className="text-4xl sm:text-[2.9rem] font-serif tracking-[-0.05em] leading-none">
+                                    {metric.customValueDisplay}
+                                  </span>
+                                ) : (
+                                  <AnimatedNumber value={metric.value} className="text-4xl sm:text-[2.9rem] font-serif tracking-[-0.05em] leading-none" />
+                                )}
                                 {metric.suffix && <span className="pb-1 text-base font-medium text-slate-500">{metric.suffix}</span>}
                               </>
                             )}
@@ -403,36 +374,39 @@ const Hero = () => {
                 className="relative mx-auto w-full max-w-[800px]"
               >
                 <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="group relative overflow-hidden rounded-[3rem] border border-white/70 bg-white/80 p-3 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-2xl"
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  style={{
+                    rotateX,
+                    rotateY,
+                    x: translateX,
+                    y: translateY,
+                    perspective: 1000
+                  }}
+                  className="relative mx-auto h-72 w-72 md:h-[420px] md:w-[420px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-100/60 via-white/0 to-emerald-100/50 opacity-80" />
-                  <div className="relative overflow-hidden rounded-[2.4rem] border border-slate-100 bg-slate-100 aspect-[4/5] lg:aspect-[3/4.2]">
-                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-70 pointer-events-none" />
-                    <Image
+                  {/* Subtle Background Effects */}
+                  <div className="absolute inset-0 z-0 pointer-events-none">
+                    <div className="absolute inset-0 bg-amber-50/20 blur-[60px] rounded-full scale-110" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-orange-100/10 blur-3xl rounded-full" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-sky-50/20 blur-3xl rounded-full" />
+                  </div>
+
+                  <motion.div
+                    animate={{ y: [-4, 4, -4] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                    className="relative z-10 w-full h-full group flex items-center justify-center"
+                  >
+                    {/* Very subtle warm glow behind (10-15%) */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/15 via-transparent to-orange-400/5 blur-3xl rounded-full scale-[0.85] opacity-80" />
+
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                       src="/profile.png"
                       alt="Imran Khan portrait"
-                      fill
-                      priority
-                      className="object-cover object-[center_16%] grayscale contrast-105 transition-transform duration-1000 group-hover:scale-[1.03]"
-                      sizes="(max-width: 1024px) 100vw, 45vw"
+                      className="h-full w-full object-cover rounded-[2.5rem] transition-all duration-700 ease-out group-hover:scale-[1.02] [mask-image:radial-gradient(circle_at_center,black_95%,transparent_100%)] [-webkit-mask-image:radial-gradient(circle_at_center,black_95%,transparent_100%)] brightness-[1.02] contrast-[1.04]"
                     />
-                  </div>
-
-                  <div className="absolute bottom-6 left-6 rounded-full border border-white/75 bg-white/85 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-700 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-                    Full stack • AI • DSA
-                  </div>
-
-                  {portfolioData.profile.openToWork && (
-                    <div className="absolute bottom-6 right-6 flex items-center gap-2 rounded-full border border-white/75 bg-white/90 px-4 py-2 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                      </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-700">Available</span>
-                    </div>
-                  )}
+                  </motion.div>
                 </motion.div>
 
                 <div className="mt-5 grid w-full gap-5 sm:grid-cols-2">

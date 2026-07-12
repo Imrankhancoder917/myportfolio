@@ -48,7 +48,7 @@ export default function DashboardSidebar({ githubHref }: DashboardSidebarProps) 
               </div>
             </div>
             <p className="mt-4 text-sm leading-6 text-slate-500">
-              DSA analytics, contest velocity, and platform performance in one clean control room.
+              A centralized dashboard showcasing real-time coding analytics, contest performance, platform statistics, and problem-solving progress—all synced in one place.
             </p>
           </div>
 
@@ -78,36 +78,6 @@ export default function DashboardSidebar({ githubHref }: DashboardSidebarProps) 
               );
             })}
           </nav>
-
-          <div className="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
-            <p className="text-xs uppercase tracking-[0.32em] text-slate-400">Quick actions</p>
-            <div className="mt-4 space-y-2">
-              <Link href="/" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <House className="h-4 w-4 text-slate-700" />
-                Home
-              </Link>
-              <Link href="/projects" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <FolderKanban className="h-4 w-4 text-indigo-500" />
-                Projects
-              </Link>
-              <Link href="/skills" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <Workflow className="h-4 w-4 text-violet-500" />
-                Skills
-              </Link>
-              <Link href={portfolioData.education?.resume || "/resume.pdf"} target="_blank" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <Sparkles className="h-4 w-4 text-sky-500" />
-                Resume
-              </Link>
-              <Link href={githubHref} target="_blank" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <GitBranch className="h-4 w-4 text-slate-700" />
-                GitHub
-              </Link>
-              <Link href="/contact" className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-white hover:text-slate-950">
-                <MessageCircle className="h-4 w-4 text-emerald-500" />
-                Contact
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </aside>

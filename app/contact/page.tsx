@@ -91,9 +91,9 @@ export default function ContactPage() {
   });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-
+  const [errorMessage, setErrorMessage] = useState("");
   const contactNote = useMemo(
-    () => "I am open to internships, freelance work, software engineering roles, and project collaborations.",
+    () => "I am always excited to connect with recruiters, developers, founders, and teams working on innovative ideas. Whether it's an internship, full-time role, freelance project, or technical collaboration, let's build something meaningful together.",
     [],
   );
 
@@ -107,6 +107,14 @@ export default function ContactPage() {
     setLoading(true);
     setStatus("idle");
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setStatus("error");
+      setErrorMessage("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -114,15 +122,24 @@ export default function ContactPage() {
         body: JSON.stringify(form),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
         setStatus("error");
+        setErrorMessage(data.error || "Failed to send message. Please try again.");
         return;
       }
 
       setStatus("success");
+      setErrorMessage("");
       setForm({ name: "", email: "", subject: "", message: "" });
+
+      setTimeout(() => {
+        setStatus("idle");
+      }, 2000);
     } catch {
       setStatus("error");
+      setErrorMessage("Network error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -171,7 +188,7 @@ export default function ContactPage() {
                   {contactNote}
                   <br />
                   <br />
-                  Feel free to send a message or connect through any of the channels below.
+                  Reach out through any of the contact options below.
                 </motion.p>
               </div>
 
@@ -226,7 +243,7 @@ export default function ContactPage() {
                   Send A Message
                 </p>
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-4xl">
-                  Premium contact form
+                  Let's Connect
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">
                   Share a project idea, internship opportunity, freelance brief, or just say hello.
@@ -254,7 +271,7 @@ export default function ContactPage() {
                     variants={itemVariants}
                     className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700"
                   >
-                    Failed to send your message. Please try again.
+                    {errorMessage || "Failed to send your message. Please try again."}
                   </motion.div>
                 )}
 

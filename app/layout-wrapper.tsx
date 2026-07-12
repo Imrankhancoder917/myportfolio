@@ -23,14 +23,19 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   if (isAnalyticsRoute) {
-    return <main className="min-h-screen bg-[#F8FAFC] text-slate-900">{children}</main>;
+    return (
+      <div className="relative min-h-screen bg-[#F8FAFC] text-slate-900">
+        <Navbar />
+        <main className="relative min-h-screen pt-24">{children}</main>
+      </div>
+    );
   }
 
   if (isProjectsRoute) {
     return (
       <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.10),_transparent_35%),linear-gradient(180deg,#f8fcff_0%,#f4fbf8_100%)] text-slate-900">
-        {!isHome && <Navbar />}
-        <main className="relative min-h-screen">{children}</main>
+        <Navbar />
+        <main className="relative min-h-screen pt-24">{children}</main>
         {!isHome && <Footer />}
       </div>
     );
@@ -39,8 +44,8 @@ export default function Layout({ children }: LayoutProps) {
   if (isSkillsRoute) {
     return (
       <div className="relative min-h-screen bg-slate-50 text-slate-900">
-        {!isHome && <Navbar />}
-        <main className="relative min-h-screen">{children}</main>
+        <Navbar />
+        <main className="relative min-h-screen pt-24">{children}</main>
         {!isHome && <Footer />}
       </div>
     );
@@ -51,8 +56,8 @@ export default function Layout({ children }: LayoutProps) {
   if (isContactRoute || isAboutRoute) {
     return (
       <div className="relative min-h-screen bg-[#fcfcfc] text-gray-900">
-        {!isHome && <Navbar />}
-        <main className="relative min-h-screen">{children}</main>
+        <Navbar />
+        <main className="relative min-h-screen pt-24">{children}</main>
         {!isHome && <Footer />}
       </div>
     );
@@ -60,11 +65,11 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <GradientBackground>
-      {!isHome && <Navbar />}
-      <main className={`relative ${isHome ? "pt-0" : "pt-16"} min-h-screen`}>
+      <Navbar />
+      <main className={`relative ${isHome ? "pt-24" : "pt-24"} min-h-screen`}>
         {children}
       </main>
-      {!isHome && <Footer />}
+      <Footer />
     </GradientBackground>
   );
 }
