@@ -116,14 +116,15 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="relative mx-auto max-w-5xl px-6 py-8 md:py-12 lg:px-8">
+    <div className="relative mx-auto max-w-[1400px] px-6 py-8 md:py-12 lg:px-12">
+      <div className="mx-auto w-full max-w-7xl">
 
       {/* SECTION 1: HERO */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid items-center gap-12 md:grid-cols-2 lg:gap-20"
+        className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-20"
       >
         <div className="flex flex-col items-start">
           <motion.div variants={itemVariants} className="mb-6 rounded-full border border-slate-200 bg-white px-4 py-1.5 shadow-sm">
@@ -368,6 +369,7 @@ export default function AboutPage() {
         </motion.div>
       </motion.section>
 
+      </div>
     </div>
   );
 }
