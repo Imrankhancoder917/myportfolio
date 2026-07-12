@@ -170,7 +170,7 @@ export default function Footer() {
 
 	return (
 		<motion.footer
-			className="relative mt-2 sm:mt-4 overflow-hidden border-t border-sky-100 bg-gradient-to-b from-sky-50 via-white to-emerald-50 text-slate-900"
+			className="relative overflow-hidden border-t border-sky-100 bg-gradient-to-b from-sky-50 via-white to-emerald-50 text-slate-900"
 			initial={{ opacity: 0, y: 16 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.55, ease: "easeOut" }}
