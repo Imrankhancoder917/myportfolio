@@ -265,7 +265,7 @@ const Hero = () => {
 
 
         {/* Main Layout */}
-        <main className="relative max-w-[1400px] mx-auto px-6 lg:px-12 pt-4 lg:pt-6 pb-4 flex flex-col gap-4 lg:gap-6">
+        <main className="relative max-w-[1400px] mx-auto px-6 lg:px-12 pt-32 lg:pt-36 pb-4 flex flex-col gap-4 lg:gap-6">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start w-full max-w-7xl mx-auto">
             <section className="relative z-10 flex flex-col items-start text-left w-full pt-2 lg:pt-4">
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-slate-200/80 bg-white/85 backdrop-blur-md shadow-[0_10px_30px_rgba(15,23,42,0.06)] mb-8 text-[10px] font-semibold tracking-[0.32em] text-slate-600 uppercase">
