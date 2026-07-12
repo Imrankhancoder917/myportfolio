@@ -44,7 +44,7 @@ export default function Navbar() {
               <li className="relative group">
                 <Link
                   href="/"
-                  className={`block px-5 py-2.5 rounded-full border border-slate-200/80 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${pathname === "/" ? "text-sky-800 bg-sky-50/80 border-sky-200 shadow-[0_4px_14px_rgba(14,165,233,0.1)]" : "text-slate-600 bg-white/85"}`}
+                  className={`block px-5 py-2.5 rounded-full border border-slate-200/80 bg-white/85 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${pathname === "/" ? "text-slate-900" : "text-slate-600"}`}
                 >
                   Home
                 </Link>
@@ -55,7 +55,7 @@ export default function Navbar() {
                   <li key={item.href} className="relative group">
                     <Link
                       href={item.href}
-                      className={`block px-5 py-2.5 rounded-full border border-slate-200/80 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${isActive ? "text-sky-800 bg-sky-50/80 border-sky-200 shadow-[0_4px_14px_rgba(14,165,233,0.1)]" : "text-slate-600 bg-white/85"}`}
+                      className={`block px-5 py-2.5 rounded-full border border-slate-200/80 bg-white/85 shadow-[0_4px_14px_rgba(0,0,0,0.03)] backdrop-blur-2xl text-[13px] tracking-wide font-bold transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 hover:text-sky-700 ${isActive ? "text-slate-900" : "text-slate-600"}`}
                     >
                       {item.label}
                     </Link>
@@ -100,7 +100,7 @@ export default function Navbar() {
                   <Link
                     href="/"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={pathname === "/" ? "text-sky-800 font-bold" : ""}
+                    className={pathname === "/" ? "text-gray-900 font-bold" : ""}
                   >
                     Home
                   </Link>
@@ -112,7 +112,7 @@ export default function Navbar() {
                       <Link
                         href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={isActive ? "text-sky-800 font-bold" : ""}
+                        className={isActive ? "text-gray-900 font-bold" : ""}
                       >
                         {item.label}
                       </Link>

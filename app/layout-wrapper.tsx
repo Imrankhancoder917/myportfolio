@@ -66,7 +66,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <GradientBackground>
       <Navbar />
-      <main className={`relative ${isHome ? "pt-24" : "pt-24"} min-h-screen`}>
+      <main className={`relative ${isHome ? "pt-0" : "pt-24"} min-h-screen`}>
         {children}
       </main>
       <Footer />
