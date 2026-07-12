@@ -416,10 +416,20 @@ const Hero = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * index, duration: 0.5 }}
                       whileHover={{ y: -6, scale: 1.01 }}
-                      className={`relative overflow-hidden rounded-3xl border bg-gradient-to-br ${toneClasses(index === 0 ? 'sky' : 'emerald')} p-4 sm:p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl`}
+                      className={`relative overflow-hidden rounded-3xl border bg-gradient-to-br ${toneClasses(index === 0 ? 'sky' : 'emerald')} shadow-[0_18px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl flex flex-col`}
                     >
                       <div className="absolute inset-0 bg-white/45 opacity-0 transition-opacity duration-300 hover:opacity-100" />
-                      <div className="relative z-10 flex h-full flex-col">
+                      
+                      <div className="relative z-10 h-40 w-full overflow-hidden border-b border-sky-100/50">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={project.image} 
+                          alt={project.title} 
+                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                      </div>
+
+                      <div className="relative z-10 flex flex-1 flex-col p-4 sm:p-5">
                         <p className="text-[9px] font-semibold uppercase tracking-[0.26em] text-slate-500">Featured Project</p>
                         <h3 className="mt-1.5 text-[1.15rem] font-serif tracking-[-0.03em] text-slate-900 leading-snug">{project.title}</h3>
                         <p className="mt-1.5 text-xs leading-5 text-slate-600 line-clamp-2">{project.description}</p>
@@ -432,7 +442,7 @@ const Hero = () => {
                           ))}
                         </div>
 
-                        <div className="mt-4 flex gap-2">
+                        <div className="mt-4 flex gap-2 pt-1 mt-auto">
                           <Link href={project.demo} className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-sky-500 py-2.5 text-xs font-medium text-white transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:bg-sky-600 hover:shadow-[0_18px_30px_rgba(14,165,233,0.16)]">
                             Live Demo <ExternalLink size={12} />
                           </Link>
