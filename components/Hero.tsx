@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import AnimatedNumber from '@/components/dashboard/AnimatedNumber';
-import Footer from '@/components/common/Footer';
 import { NAV_ITEMS } from '@/lib/constants/config';
 import portfolioData from '@/data/portfolio.json';
 import type { AnalyticsDashboardData } from '@/lib/analytics/dashboard';
@@ -449,8 +448,6 @@ const Hero = () => {
               </motion.div>
             </section>
           </div>
-
-          <Footer />
         </main>
 
         <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
